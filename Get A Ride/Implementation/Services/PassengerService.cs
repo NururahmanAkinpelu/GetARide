@@ -87,11 +87,11 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var passengers = await _passengerRepository.GetActivePassengers(cancellationToken);
-            if (passengers == null)
+            if (passengers.Count == 0)
             {
                 return new PassengersResponseModel
                 {
-                    Message = "No admin is activated",
+                    Message = "No passenger is activated",
                     Success = false
                 };
             }
@@ -105,7 +105,7 @@ namespace GetARide.Implementation.Services
 
             return new PassengersResponseModel
             {
-                Message = "admin retrieved successfully",
+                Message = "passengers retrieved successfully",
                 Success = true,
                 PassengerDTOs = passengerDtos
             };
@@ -116,7 +116,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var passengers = await _passengerRepository.GetAllPassengers(cancellationToken);
-            if (passengers == null)
+            if (passengers.Count == 0)
             {
                 return new PassengersResponseModel
                 {
@@ -144,7 +144,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var passengers = await _passengerRepository.GetDeactivatedPassengers(cancellationToken);
-            if (passengers == null)
+            if (passengers.Count == 0)
             {
                 return new PassengersResponseModel
                 {

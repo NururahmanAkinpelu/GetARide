@@ -98,31 +98,31 @@ namespace GetARide.Controllers
             return BadRequest(driver);
         }
 
-        [HttpPost("ApproveDriver")]
-        public async Task<IActionResult> ApprovedDriver([FromRoute]string email, CancellationToken cancellationToken)
+        [HttpPost("ApproveDriver/{id}")]
+        public async Task<IActionResult> ApprovedDriver([FromRoute]int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.ApproveDriver(email, cancellationToken);
+            var driver = await _driverService.ApproveDriver(id, cancellationToken);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
-        [HttpPost("ActivateDriver")]
-        public async Task<IActionResult> ActivateDriver([FromRoute] string email, CancellationToken cancellationToken)
+        [HttpPost("ActivateDriver/{id}")]
+        public async Task<IActionResult> ActivateDriver([FromRoute] int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.ActivateDriver(email, cancellationToken);
+            var driver = await _driverService.ActivateDriver(id, cancellationToken);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
         [HttpDelete("Deactivatedriver")]
-        public async Task<IActionResult> DeactivateDriver([FromRoute] string email, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeactivateDriver([FromRoute] int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.DeactivateDriver(email, cancellationToken);
+            var driver = await _driverService.DeactivateDriver(id, cancellationToken);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);

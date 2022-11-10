@@ -14,10 +14,12 @@ namespace GetARide.Implementation.Services
     public class VehicleService : IVehicleService
     {
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ApplicationContext _context;
-        public  VehicleService(IVehicleRepository vehicleRepository, ApplicationContext context)
+        public  VehicleService(IVehicleRepository vehicleRepository, IUserRepository userRepository, ApplicationContext context)
         {
             _vehicleRepository = vehicleRepository;
+            _userRepository = userRepository;
             _context = context;
         }
         public async Task<BaseResponse> DeleteVehicle(int id, CancellationToken cancellationToken)
@@ -41,7 +43,7 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> RegisterVehicle(VehicleRequestModel model, CancellationToken cancellationToken)
+        public async Task<BaseResponse> RegisterVehicle(VehicleRequestModel model, CancellationToken cancellationToken, int driverId = 27)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var getVehicle = await _vehicleRepository.GetVehicleByPlateNumber(model.PlateNumber, cancellationToken);
@@ -61,7 +63,8 @@ namespace GetARide.Implementation.Services
                 Colour = model.Colour,
                 PlateNumber = model.PlateNumber,
                 Documents = model.Documents,
-                DriverId = model.DriverId
+                Type = model.Type,
+                DriverId = driverId
             };
             var addVehicle = await _vehicleRepository.RegisterVehicle(vehicle, cancellationToken);
             vehicle.CreatedBy = addVehicle.DriverId;
@@ -118,8 +121,8 @@ namespace GetARide.Implementation.Services
                 };
             }
             vehicle.Name = model.Name;
-            vehicle.Colour = model.Colour;
             vehicle.Model = model.Model;
+            vehicle.Colour = model.Colour;
             vehicle.PlateNumber = model.PlateNumber;
             vehicle.Documents = model.Documents;
 
@@ -129,6 +132,36 @@ namespace GetARide.Implementation.Services
                 Message = "Vehicle updated successfully",
                 Success = true
             };
+        }
+
+        public async Task<VehiclesResponseModel> GetAllDriversVehicle(int userId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var driver = await _userRepository.GetUserAsync(userId, cancellationToken);
+            var vehicles = await _vehicleRepository.GetAllDriversVehicles(driver.Id, cancellationToken);
+            if (vehicles.Count == 0)
+            {
+                return new VehiclesResponseModel
+                {
+                    Message = "This Driver no get any vehicle o",
+                    Success = false
+                };
+            }
+            return new VehiclesResponseModel
+            {
+                Message = "List of vehicles",
+                Success = true,
+                Data = vehicles.Select(v => new VehicleDTO
+                {
+                    Name = v.Name,
+                    Model = v.Model,
+                    Colour = v.Colour,
+                    PlateNumber = v.PlateNumber,
+                    Type = v.Type,
+
+                }).ToList()
+            };
+            
         }
     }
 }

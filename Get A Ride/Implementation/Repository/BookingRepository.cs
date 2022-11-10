@@ -97,13 +97,13 @@ namespace GetARide.Implementation.Repository
             return bookings;
         }
 
-        public async Task<ICollection<Booking>> GetAllRejectedBookings(CancellationToken cancellationToken)
+        /*public async Task<ICollection<Booking>> GetAllRejectedBookings(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var bookings = await _context.Bookings.Include(b => b.Driver).Include(b => b.Passenger).
                 Where(b => b.Status == BookingStatus.Rejected).ToListAsync();
             return bookings;
-        }
+        }*/
 
         public async Task<ICollection<Booking>> GetAllCancelledBookings(CancellationToken cancellationToken)
         {
@@ -121,13 +121,13 @@ namespace GetARide.Implementation.Repository
             return bookings;
         }
 
-        public async Task<ICollection<Booking>> GetRejectedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
+       /* public async Task<ICollection<Booking>> GetRejectedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var bookings = await _context.Bookings.Include(b => b.Driver).Include(b => b.Passenger).
                Where(b => b.Status == BookingStatus.Rejected && b.LastModifiedOn == dateTime).ToListAsync();
             return bookings;
-        }
+        }*/
 
         public async Task<ICollection<Booking>> GetCancelledBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
         {
@@ -135,6 +135,20 @@ namespace GetARide.Implementation.Repository
             var bookings = await _context.Bookings.Include(b => b.Driver).Include(b => b.Passenger).
                Where(b => b.Status == BookingStatus.Canceled && b.LastModifiedOn == dateTime).ToListAsync();
             return bookings;
+        }
+
+        public async Task<ICollection<Booking>> GetAllCreatedBookingsByLocation(string location, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var bookings = await _context.Bookings.Include(b => b.Trip).Where(b => b.Trip.Status == TripStatus.NotStarted).Where(b => b.Trip.PickUpLocation == location).ToListAsync();
+            return bookings;
+        }
+
+        public async Task<Booking> GetBooking(int id, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var booking = await _context.Bookings.SingleOrDefaultAsync(b => b.Id == id);
+            return booking;
         }
     }
 }

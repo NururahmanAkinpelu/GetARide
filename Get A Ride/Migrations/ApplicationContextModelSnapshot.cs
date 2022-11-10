@@ -85,7 +85,7 @@ namespace GetARide.Migrations
                     b.Property<DateTime>("DeletedOn")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("DriverId")
+                    b.Property<int?>("DriverId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -161,6 +161,9 @@ namespace GetARide.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("License")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Location")
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
@@ -304,9 +307,6 @@ namespace GetARide.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<decimal>("BasePrice")
-                        .HasColumnType("decimal(18, 2)");
-
                     b.Property<string>("Colour")
                         .HasColumnType("text");
 
@@ -348,6 +348,9 @@ namespace GetARide.Migrations
 
                     b.Property<string>("PlateNumber")
                         .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -478,7 +481,7 @@ namespace GetARide.Migrations
                     b.Property<string>("DropLocation")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("EndTime")
+                    b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime");
 
                     b.Property<bool>("IsDeleted")
@@ -525,9 +528,7 @@ namespace GetARide.Migrations
                 {
                     b.HasOne("GetARide.Entities.Driver", "Driver")
                         .WithMany("Bookings")
-                        .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DriverId");
 
                     b.HasOne("GetARide.Entities.Passenger", "Passenger")
                         .WithMany("Bookings")
@@ -554,13 +555,13 @@ namespace GetARide.Migrations
             modelBuilder.Entity("GetARide.Entities.Identity.UserRoles", b =>
                 {
                     b.HasOne("GetARide.Entities.Identity.Role", "Role")
-                        .WithMany()
+                        .WithMany("UserRole")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GetARide.Entities.Identity.User", "User")
-                        .WithMany()
+                        .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -605,11 +606,13 @@ namespace GetARide.Migrations
 
             modelBuilder.Entity("GetARide.Entities.Trip", b =>
                 {
-                    b.HasOne("GetARide.Entities.Booking", null)
+                    b.HasOne("GetARide.Entities.Booking", "Booking")
                         .WithOne("Trip")
                         .HasForeignKey("GetARide.Entities.Trip", "BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Booking");
                 });
 
             modelBuilder.Entity("GetARide.Entities.Booking", b =>
@@ -626,6 +629,11 @@ namespace GetARide.Migrations
                     b.Navigation("Vehicles");
                 });
 
+            modelBuilder.Entity("GetARide.Entities.Identity.Role", b =>
+                {
+                    b.Navigation("UserRole");
+                });
+
             modelBuilder.Entity("GetARide.Entities.Identity.User", b =>
                 {
                     b.Navigation("Admin");
@@ -633,6 +641,8 @@ namespace GetARide.Migrations
                     b.Navigation("Driver");
 
                     b.Navigation("Passenger");
+
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("GetARide.Entities.Passenger", b =>

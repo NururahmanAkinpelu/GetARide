@@ -20,21 +20,31 @@ namespace GetARide.Controllers
             _tripService = tripService;
         }
 
-        [HttpPost("StartTrip/{id}")]
-        public async Task<IActionResult> StartTrip(TripRequestModel model,[FromRoute]int id, CancellationToken cancellationToken)
+        [HttpPost("CreateTrip")]
+        public async Task<IActionResult> CreateTrip([FromForm]TripRequestModel model, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var trip = await _tripService.StatTrip(model, id, cancellationToken);
+            var trip = await _tripService.CreateTrip(model, cancellationToken);
+            if (trip.Success == true) return Ok(trip);
+
+            return BadRequest(trip);
+        }
+
+        [HttpPost("StartTrip/{tripId}")]
+        public async Task<IActionResult> StartTrip(int tripId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var trip = await _tripService.StartTrip(tripId, cancellationToken);
             if (trip.Success == true) return Ok(trip);
 
             return BadRequest(trip);
         }
 
         [HttpPost("EndTrip/{id}")]
-        public async Task<IActionResult> EndTrip(TripRequestModel model,[FromRoute]int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> EndTrip([FromRoute]int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var trip = await _tripService.EndTrip(model, id, cancellationToken);
+            var trip = await _tripService.EndTrip(id, cancellationToken);
             if (trip.Success == true) return Ok(trip);
 
             return BadRequest(trip);

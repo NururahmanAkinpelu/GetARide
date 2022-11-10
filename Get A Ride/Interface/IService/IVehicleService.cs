@@ -9,9 +9,10 @@ namespace GetARide.Interface.IService
 {
     public  interface IVehicleService
     {
-        public Task<BaseResponse> RegisterVehicle(VehicleRequestModel model, CancellationToken cancellationToken);
+        public Task<BaseResponse> RegisterVehicle(VehicleRequestModel model,  CancellationToken cancellationToken, int driverId);
         public Task<BaseResponse> UpdateVehicle(UpdateVehicleRequestModel model, int id, CancellationToken cancellationToken);
         public Task<BaseResponse> DeleteVehicle(int id, CancellationToken cancellationToken);
         public Task<BaseResponse> ApproveVehicle(int id, CancellationToken cancellationToken);
+        public Task<VehiclesResponseModel> GetAllDriversVehicle(int driverId, CancellationToken cancellationToken);
     }
 }

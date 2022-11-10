@@ -10,12 +10,12 @@ namespace GetARide.Interface.IService
     public interface IAdminService
     {
         public Task<BaseResponse> RegisterAdmin(AdminRequestModel model, CancellationToken cancellationToken);
-        public Task<BaseResponse> UpdateAdmin(UpdateAdminRequestModel model, string email, CancellationToken cancellationToken);
+        public Task<BaseResponse> UpdateAdmin(UpdateAdminRequestModel model, int id, CancellationToken cancellationToken);
         public Task<AdminResponseModel> GetAdmin(int id, CancellationToken cancellationToken);
         public Task<AdminResponseModel> GetAdminByEmail(string email, CancellationToken cancellationToken);
         public Task<AdminsResponseModel> GetAllAdmins(CancellationToken cancellationToken);
-        public Task<BaseResponse> ActivateAdmin(string email, CancellationToken cancellationToken);
-        public Task<BaseResponse> DeActivateAdmin(string email, CancellationToken cancellationToken);
+        public Task<BaseResponse> ActivateAdmin(int id, CancellationToken cancellationToken);
+        public Task<BaseResponse> DeActivateAdmin(int id, CancellationToken cancellationToken);
         public Task<AdminsResponseModel> GetAllActiveAdmins(CancellationToken cancellationToken);
         public Task<AdminsResponseModel> GetAllDeactivatedAdmins(CancellationToken cancellationToken);
     }

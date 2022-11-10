@@ -17,9 +17,11 @@ namespace GetARide.DTO
         [JsonConverter(typeof(JsonStringEnumConverter))]*/
         public BookingStatus Status { get; set; }
         public int PassengerId { get; set; }
-        public int DriverId { get; set; }
+        public int? DriverId { get; set; }
+        public string StartLocation { get; set; }
+        public string EndLocation { get; set; }
         public int TripId { get; set; }
-        public Trip Trip { get; set; }
+       
 
     }
 
@@ -27,15 +29,16 @@ namespace GetARide.DTO
     {
         public string ReferenceNumber { get; set; }
         public BookingStatus Status { get; set; }
-        public int DriverId { get; set; }
+        //public int? DriverId { get; set; }
         public int PassengerId { get; set; }
         public int TripId { get; set; }
-        public Trip Trip { get; set; }
+        //public Trip Trip { get; set; }
     }
 
     public class UpdateBookingRequestModel
     {
-        public int DriverId { get; set; }
+        public BookingStatus Status { get; set; }
+        public int? DriverId { get; set; }
         public int PassengerId { get; set; }
         public int PaymentId { get; set; }
     }

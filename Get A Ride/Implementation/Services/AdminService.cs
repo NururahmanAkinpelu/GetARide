@@ -28,10 +28,10 @@ namespace GetARide.Implementation.Services
             _context = context;
         }
         
-        public async Task<BaseResponse> ActivateAdmin(string email, CancellationToken cancellationToken)
+        public async Task<BaseResponse> ActivateAdmin(int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminRepository.GetAdminByEmail(email, cancellationToken);
+            var admin = await _adminRepository.GetAdminById(id, cancellationToken);
             if (admin == null)
             {
                 return new BaseResponse
@@ -57,10 +57,10 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> DeActivateAdmin(string email, CancellationToken cancellationToken)
+        public async Task<BaseResponse> DeActivateAdmin(int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminRepository.GetAdminByEmail(email, cancellationToken);
+            var admin = await _adminRepository.GetAdminById(id, cancellationToken);
 
             if (admin == null)
             {
@@ -112,7 +112,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var admins = await _adminRepository.GetAllActivatedAdmin(cancellationToken);
-            if (admins == null)
+            if (admins.Count == 0)
             {
                 return new AdminsResponseModel
                 {
@@ -140,7 +140,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var admins = await _adminRepository.GetAllDeactivatedAdmin(cancellationToken);
-            if (admins == null)
+            if (admins.Count == 0)
             {
                 return new AdminsResponseModel
                 {
@@ -169,7 +169,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var admins = await _adminRepository.GetAllAdmins(cancellationToken);
-            if (admins == null)
+            if (admins.Count == 0)
             {
                 return new AdminsResponseModel
                 {
@@ -197,7 +197,7 @@ namespace GetARide.Implementation.Services
         public async Task<BaseResponse> RegisterAdmin(AdminRequestModel model, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var u = await _userRepository.GetUserByEmailAsync(model.Email, cancellationToken);
+            var u = await _adminRepository.GetAdminByEmail(model.Email, cancellationToken);
             if (u != null)
             {
                 return new BaseResponse
@@ -209,7 +209,7 @@ namespace GetARide.Implementation.Services
             var user = new User
             {
                 FullName = $"{model.FirstName} {model.LastName}",
-                Password = BCrypt.Net.BCrypt.HashPassword(model.Password),
+                Password = (model.Password),
                 Email = model.Email
             };
             Console.WriteLine($"{user.Password}");
@@ -229,7 +229,8 @@ namespace GetARide.Implementation.Services
                 UserId = addUser.Id,
                 RoleId = role.Id
             };
-            user.UserRoles.Add(userRole);
+            _context.UserRoles.Add(userRole);
+
             var updateUser = await _userRepository.UpdateUserAsync(user, cancellationToken);
 
             var admin = new Admin
@@ -254,10 +255,10 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> UpdateAdmin(UpdateAdminRequestModel model, string email, CancellationToken cancellationToken)
+        public async Task<BaseResponse> UpdateAdmin(UpdateAdminRequestModel model, int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminRepository.GetAdminByEmail(email, cancellationToken);
+            var admin = await _adminRepository.GetAdminById(id, cancellationToken);
             if (admin == null)
             {
                 return new BaseResponse
@@ -266,7 +267,7 @@ namespace GetARide.Implementation.Services
                     Success = false
                 };
             }
-            var getUser = await _userRepository.GetUserByEmailAsync(email, cancellationToken);
+            var getUser = await _userRepository.GetUserByEmailAsync(model.Email, cancellationToken);
             if (getUser == null)
             {
                 return new BaseResponse

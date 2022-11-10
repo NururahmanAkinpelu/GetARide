@@ -12,7 +12,7 @@ namespace GetARide.Entities
     public class Booking:AuditableEntity
     {
         public string ReferenceNumber { get; set; }
-        public int DriverId { get; set; }
+        public int? DriverId { get; set; }
 
         [EnumDataType(typeof(BookingStatus))]
         public BookingStatus Status { get; set; }

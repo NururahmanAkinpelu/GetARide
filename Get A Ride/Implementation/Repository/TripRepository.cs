@@ -59,6 +59,8 @@ namespace GetARide.Implementation.Repository
             return trips;
         }
 
+        
+
         /*public async Task<Trip> GetTypeOfTrips(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

@@ -16,7 +16,7 @@ namespace GetARide.DTO
         public string Email { get; set; }
         public ICollection<RoleDTO> Roles { get; set; } = new HashSet<RoleDTO>();
     }
-    public class LoginResponse
+    public class LoginResponse 
     {
         public string Token { get; set; }
         public UserResponseModel Data { get; set; }

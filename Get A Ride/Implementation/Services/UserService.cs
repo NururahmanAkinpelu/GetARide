@@ -25,7 +25,16 @@ namespace GetARide.Implementation.Services
         {
             var user = await _userRepository.GetUserByEmailAsync(model.Email, cancellationToken);
 
-            if (user != null && model.Password == user.Password)
+            if (user.IsDeleted == true)
+            {
+                return new UserResponseModel
+                {
+                    Message = "Your acct has been deactivated so you can't log-in.",
+                    Success = false
+                };
+            }
+         
+            else if (user != null && model.Password == user.Password)
             {
                //var roles = await _roleRepository.GetRolesByUserId(user.Id, cancellationToken);
                 return new UserResponseModel

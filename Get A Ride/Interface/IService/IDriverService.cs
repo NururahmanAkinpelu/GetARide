@@ -11,9 +11,9 @@ namespace GetARide.Interface.IService
     {
         public Task<DriverResponseModel> RegisterDriver(DriverRequestModel model, CancellationToken cancellationToken);
         public Task<BaseResponse> UpdateDriver(UpdateDriverRequestModel model, string email, CancellationToken cancellationToken);
-        public Task<BaseResponse> ApproveDriver(string email, CancellationToken cancellationToken);
-        public Task<BaseResponse> ActivateDriver(string email, CancellationToken cancellationToken);
-        public Task<BaseResponse> DeactivateDriver(string email, CancellationToken cancellationToken);
+        public Task<BaseResponse> ApproveDriver(int id, CancellationToken cancellationToken);
+        public Task<BaseResponse> ActivateDriver(int id, CancellationToken cancellationToken);
+        public Task<BaseResponse> DeactivateDriver(int id, CancellationToken cancellationToken);
         public Task<DriversResponseModel> GetAllDrivers(CancellationToken cancellationToken);
         public Task<DriverResponseModel> GetDriverByid(int id, CancellationToken cancellationToken);
         public Task<DriverResponseModel> GetDriverByEmail(string email, CancellationToken cancellationToken);

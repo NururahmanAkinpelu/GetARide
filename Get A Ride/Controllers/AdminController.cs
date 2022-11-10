@@ -38,10 +38,10 @@ namespace GetARide.Controllers
         }
 
         [HttpPut("UpdateAdmin/{id}")]
-        public async Task<IActionResult> UpdateAdmin([FromRoute]UpdateAdminRequestModel model,[FromRoute]string email, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAdmin([FromRoute]UpdateAdminRequestModel model,[FromRoute]int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.UpdateAdmin(model, email, cancellationToken);
+            var admin = await _adminService.UpdateAdmin(model, id, cancellationToken);
             if (admin.Success == false) return BadRequest(admin);
 
             return Ok(admin);
@@ -67,21 +67,21 @@ namespace GetARide.Controllers
             return BadRequest(admin);
         }
 
-        [HttpPost("ActivateAdmin")]
-        public async Task<IActionResult> ActivateAdmin([FromRoute]string email, CancellationToken cancellationToken)
+        [HttpPost("ActivateAdmin/{id}")]
+        public async Task<IActionResult> ActivateAdmin([FromRoute]int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.ActivateAdmin(email, cancellationToken);
+            var admin = await _adminService.ActivateAdmin(id, cancellationToken);
             if (admin.Success == true) return Ok(admin);
 
             return BadRequest(admin);
         }
 
         [HttpPost("DeactivateAdmin/{id}")]
-        public async Task<IActionResult> DectivateAdmin([FromRoute] string emai, CancellationToken cancellationToken)
+        public async Task<IActionResult> DectivateAdmin([FromRoute] int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.DeActivateAdmin(emai, cancellationToken);
+            var admin = await _adminService.DeActivateAdmin(id, cancellationToken);
             if (admin.Success == true) return Ok(admin);
 
             return BadRequest(admin);

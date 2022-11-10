@@ -26,10 +26,10 @@ namespace GetARide.Implementation.Services
             _context = context;
         }
 
-        public async Task<BaseResponse> ActivateDriver(string email, CancellationToken cancellationToken)
+        public async Task<BaseResponse> ActivateDriver(int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverRepository.GetDriverByEmail(email, cancellationToken);
+            var driver = await _driverRepository.GetDriverById(id, cancellationToken);
             if (driver == null)
             {
                 return new BaseResponse
@@ -47,6 +47,7 @@ namespace GetARide.Implementation.Services
                 };
             }
             driver.IsDeleted = true;
+            await _driverRepository.UpdateDriver(driver, cancellationToken);
             return new BaseResponse
             {
                 Message = "Driver activated successfully",
@@ -54,10 +55,10 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> ApproveDriver(string email, CancellationToken cancellationToken)
+        public async Task<BaseResponse> ApproveDriver(int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverRepository.GetDriverByEmail(email, cancellationToken);
+            var driver = await _driverRepository.GetDriverById(id, cancellationToken);
             if (driver == null)
             {
                 return new BaseResponse
@@ -75,17 +76,18 @@ namespace GetARide.Implementation.Services
                 };
             }
             driver.IsApproved = true;
+            await _driverRepository.UpdateDriver(driver, cancellationToken);
             return new BaseResponse
             {
-                Message = "Driver activated successfully",
+                Message = "Driver approved successfully",
                 Success = true
             };
         }
 
-        public async Task<BaseResponse> DeactivateDriver(string email, CancellationToken cancellationToken)
+        public async Task<BaseResponse> DeactivateDriver(int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverRepository.GetDriverByEmail(email, cancellationToken);
+            var driver = await _driverRepository.GetDriverById(id, cancellationToken);
             if (driver == null)
             {
                 return new BaseResponse
@@ -103,6 +105,7 @@ namespace GetARide.Implementation.Services
                 };
             }
             driver.IsDeleted = true;
+            await _driverRepository.UpdateDriver(driver, cancellationToken);
             return new BaseResponse
             {
                 Message = "Driver activated successfully",
@@ -114,7 +117,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _driverRepository.GetActivatedDrivers(cancellationToken);
-            if (drivers == null)
+            if (drivers.Count == 0)
             {
                 return new DriversResponseModel
                 {
@@ -144,7 +147,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _driverRepository.GetAllDrivers(cancellationToken);
-            if (drivers == null)
+            if (drivers.Count == 0)
             {
                 return new DriversResponseModel
                 {
@@ -174,7 +177,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _driverRepository.GetApprovedDrivers(cancellationToken);
-            if (drivers == null)
+            if (drivers.Count == 0)
             {
                 return new DriversResponseModel
                 {
@@ -204,7 +207,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _driverRepository.GetDeactivaedDrivers(cancellationToken);
-            if (drivers == null)
+            if (drivers.Count == 0)
             {
                 return new DriversResponseModel
                 {
@@ -327,7 +330,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _driverRepository.GetUnapprovedDrivers(cancellationToken);
-            if (drivers == null)
+            if (drivers.Count == 0)
             {
                 return new DriversResponseModel
                 {
@@ -400,17 +403,18 @@ namespace GetARide.Implementation.Services
                 License = model.Licence,
                 UserId = user.Id
             };
+           
+            var addDriver = await _driverRepository.RegisterDriver(driver, cancellationToken);
             var driverDto = new DriverDTO
             {
-                Id = driver.Id,
-                FirstName = driver.FirstName,
-                LastName = driver.LastName,
-                PhoneNumber = driver.PhoneNumber,
-                Email = driver.Email,
-                Image = driver.Image,
-                License = driver.License
+                Id = addDriver.Id,
+                FirstName = addDriver.FirstName,
+                LastName = addDriver.LastName,
+                PhoneNumber = addDriver.PhoneNumber,
+                Email = addDriver.Email,
+                Image = addDriver.Image,
+                License = addDriver.License
             };
-            var addDriver = await _driverRepository.RegisterDriver(driver, cancellationToken);
             user.UserRoles.Add(userRole);
 
             driver.CreatedBy = driver.Id;
@@ -474,7 +478,7 @@ namespace GetARide.Implementation.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _driverRepository.GetAvailableDrivers(cancellationToken);
-            if (drivers == null)
+            if (drivers.Count == 0)
             {
                 return new DriversResponseModel
                 {

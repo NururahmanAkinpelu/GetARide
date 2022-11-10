@@ -37,11 +37,7 @@ namespace GetARide.Implementation.Repository
         public async Task<Admin> GetAdminById(int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (id == 0)
-            {
-                throw new ArgumentNullException();
-            }
-            var admin = await _context.Admins.Include(x => x.User).SingleOrDefaultAsync(a => a.User.Id == id, cancellationToken);
+            var admin = await _context.Admins.Include(x => x.User).Where(a => a.Id == id).SingleOrDefaultAsync();
             if (admin == null)
             {
                 return null;
@@ -52,11 +48,7 @@ namespace GetARide.Implementation.Repository
         public async Task<Admin> GetAdminByEmail(string email, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (email == null)
-            {
-                throw new ArgumentNullException();
-            }
-            var admin = await _context.Admins.Include(x => x.User).SingleOrDefaultAsync(a => a.User.Email == email, cancellationToken);
+            var admin = await _context.Admins.Include(x => x.User).SingleOrDefaultAsync(a => a.Email == email, cancellationToken);
             if (admin == null)
             {
                 return null;

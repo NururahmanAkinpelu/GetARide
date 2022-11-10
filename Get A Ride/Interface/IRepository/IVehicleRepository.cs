@@ -14,5 +14,6 @@ namespace GetARide.Interface.IRepository
        /* public Task<Vehicle> DeleteVehicle(Vehicle vehicle, CancellationToken cancellationToken);*/
         public Task<Vehicle> GetVehicleById(int id, CancellationToken cancellationToken);
         public Task<Vehicle> GetVehicleByPlateNumber(string plateNumber, CancellationToken cancellationToken);
+        public Task<ICollection<Vehicle>> GetAllDriversVehicles(int driverId, CancellationToken cancellationToken);
     }
 }

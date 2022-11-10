@@ -7,7 +7,8 @@ namespace GetARide.Entities
 {
     public enum TripStatus
     {
-        Ongoing = 1,
+        NotStarted = 1,
+        Ongoing,
         Ended,
     }
 }

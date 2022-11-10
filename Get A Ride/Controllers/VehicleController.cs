@@ -24,11 +24,11 @@ namespace GetARide.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpPost("RegisterVehicle")]
-        public async Task<IActionResult> RegisterVehicle([FromForm]VehicleRequestModel model, CancellationToken cancellationToken)
+        [HttpPost("RegisterVehicle/{driverId}")]
+        public async Task<IActionResult> RegisterVehicle([FromBody]VehicleRequestModel model, CancellationToken cancellationToken, [FromRoute] int driverId = 27)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var files = HttpContext.Request.Form;
+            /*var files = HttpContext.Request.Form;
 
             if (files != null && files.Count > 0)
             {
@@ -45,9 +45,9 @@ namespace GetARide.Controllers
                     }
                     model.Documents = (documents);
                 }
-            }
+            }*/
 
-            var vehicle = await _vehicleService.RegisterVehicle(model, cancellationToken);
+            var vehicle = await _vehicleService.RegisterVehicle(model, cancellationToken, driverId);
             if (vehicle.Success == true) return Ok(vehicle);
 
             return BadRequest(vehicle);
@@ -90,6 +90,17 @@ namespace GetARide.Controllers
             if (vehicle.Success == true) return Ok(vehicle);
 
             return BadRequest(vehicle);
+        }
+
+        [HttpGet("GetAllDriversVehicle/{driverId}")]
+        public async Task<IActionResult> GetAllDriversVehicle([FromRoute]int driverId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var vehicle = await _vehicleService.GetAllDriversVehicle(driverId, cancellationToken);
+            if (vehicle.Success == true) return Ok(vehicle);
+
+            return BadRequest(vehicle);
+
         }
     }
 }

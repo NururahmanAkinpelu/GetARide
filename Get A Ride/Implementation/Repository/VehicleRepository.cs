@@ -58,5 +58,12 @@ namespace GetARide.Implementation.Repository
             var vehicle = await _context.Vehicles.Include(v => v.Driver).SingleOrDefaultAsync(v => v.PlateNumber == plateNumber, cancellationToken);
             return vehicle;
         }
+
+        public async Task<ICollection<Vehicle>> GetAllDriversVehicles(int driverId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var vehicles = await _context.Vehicles.Include(v => v.Driver).Where(v => v.Driver.UserId == driverId).ToListAsync();
+            return vehicles;
+        }
     }
 }

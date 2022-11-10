@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,37 +21,37 @@ namespace GetARide.Controllers
             _bookingService = bookingService;
         }
 
-        [HttpPost("CreateBooking")]
-        public async Task<IActionResult> CreateBooking([FromForm]BookingRequestModel model, CancellationToken cancellationToken)
+        [HttpPost("CreateBooking/{id}")]
+        public async Task<IActionResult> CreateBooking([FromRoute]int id,CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var booking = await _bookingService.CreateBooking(model, cancellationToken);
+            var booking = await _bookingService.CreateBooking(id, cancellationToken);
             if (booking.Success == true) return Ok(booking);
 
             return BadRequest(booking);
         }
 
-        [HttpPost("CancelBooking")]
-        public async Task<IActionResult> CancelBooking([FromRoute]string referenceNumber, CancellationToken cancellationToken)
+        [HttpPost("CancelBooking/{id}")]
+        public async Task<IActionResult> CancelBooking([FromRoute]int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var booking = await _bookingService.CancelBooking(referenceNumber, cancellationToken);
+            var booking = await _bookingService.CancelBooking(id, cancellationToken);
             if (booking.Success == true) return Ok(booking);
 
             return BadRequest(booking);
         }
 
-        [HttpPost("AcceptBooking")]
-        public async Task<IActionResult> AcceptBooking([FromRoute]string referenceNumber, CancellationToken cancellationToken)
+        [HttpPost("AcceptBooking/{id}")]
+        public async Task<IActionResult> AcceptBooking(int driverId, [FromRoute]int id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var booking = await _bookingService.AcceptBooking(referenceNumber, cancellationToken);
+            var booking = await _bookingService.AcceptBooking(driverId, id, cancellationToken);
             if (booking.Success == true) return Ok(booking);
 
             return BadRequest(booking);
         }
 
-        [HttpPost("RejectBooking")]
+        /*[HttpPost("RejectBooking")]
         public async Task<IActionResult> RejectBooking([FromRoute] string referenceNumber, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -59,6 +60,7 @@ namespace GetARide.Controllers
 
             return BadRequest(booking);
         }
+*/
 
         [HttpGet("GetBookingByReferenceNumber")]
         public async Task<IActionResult> GetBookingByReferenceNumber([FromRoute] string referenceNumber, CancellationToken cancellationToken)
@@ -130,7 +132,7 @@ namespace GetARide.Controllers
             return BadRequest(booking);
         }
 
-        [HttpGet("GetAllRejectedBookings")]
+       /* [HttpGet("GetAllRejectedBookings")]
         public async Task<IActionResult> GetAllRejectedBookings(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -138,7 +140,7 @@ namespace GetARide.Controllers
             if (booking.Success == true) return Ok(booking);
 
             return BadRequest(booking);
-        }
+        }*/
 
         [HttpGet("GetAllCancelledBookings")]
         public async Task<IActionResult> GetAllCancelledBookings(CancellationToken cancellationToken)
@@ -160,7 +162,7 @@ namespace GetARide.Controllers
             return BadRequest(booking);
         }
 
-        [HttpGet("GetRejectedBookingsByDate")]
+        /*[HttpGet("GetRejectedBookingsByDate")]
         public async Task<IActionResult> GetRejectedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -168,13 +170,23 @@ namespace GetARide.Controllers
             if (booking.Success == true) return Ok(booking);
 
             return BadRequest(booking);
-        }
+        }*/
 
         [HttpGet("GetCancelledBookingsByDate")]
         public async Task<IActionResult> GetCancelledBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var booking = await _bookingService.GetCancelledBookingsByDate(dateTime, cancellationToken);
+            if (booking.Success == true) return Ok(booking);
+
+            return BadRequest(booking);
+        }
+
+        [HttpGet("GetAllCreatedBookingsByLocation")]
+        public async Task<IActionResult> GetAllCreatedBookingsByLocation(string location, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var booking = await _bookingService.GetAllCreatedBookingsByLocation(location, cancellationToken);
             if (booking.Success == true) return Ok(booking);
 
             return BadRequest(booking);

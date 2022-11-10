@@ -12,10 +12,10 @@ namespace GetARide.DTO
         public string PickUpLocation { get; set; }
         public string DropLocation { get; set; }
         public DateTime StartTime { get; set; } = DateTime.UtcNow;
-        public DateTime EndTime { get; set; } = DateTime.UtcNow;
+        public DateTime? EndTime { get; set; } = DateTime.UtcNow;
         public TripType TripType { get; set; }
         public int BookingId { get; set; }
-        public Booking Booking { get; set; }
+        
     }
 
     public class TripRequestModel
@@ -24,7 +24,6 @@ namespace GetARide.DTO
         public string DropLocation { get; set; }
         public TripType TripType { get; set; }
         public int BookingId { get; set; }
-        public Booking Booking { get; set; }
     }
 
     public class TripResponseModel : BaseResponse
