@@ -9,10 +9,12 @@ namespace GetARide.Interface.IService
 {
     public interface ITripService
     {
-        public Task<BaseResponse> CreateTrip(TripRequestModel model,  CancellationToken cancellationToken);
-        public Task<BaseResponse> StartTrip(int tripid, CancellationToken cancellationToken);
-        public Task<BaseResponse> EndTrip( int id, CancellationToken cancellationToken);
-        public Task<TripsResponseModel> GetOngoingTrips(CancellationToken cancellationToken);
-        public Task<TripsResponseModel> GetEndedTrips(CancellationToken cancellationToken);
+        public Task<TripResponseModel> CreateTrip(TripRequestModel model );
+        public Task<TripResponseModel> MakeReservation(TripRequestModel model);
+        public Task<BaseResponse> StartTrip(int tripid );
+        public Task<BaseResponse> EndTrip( int id );
+        public Task<TripsResponseModel> GetOngoingTrips( );
+        public Task<int> GetOngoingTripsCount();
+        public Task<TripsResponseModel> GetEndedTrips( );
     }
 }

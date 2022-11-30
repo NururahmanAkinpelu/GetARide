@@ -12,36 +12,35 @@ using GetARide.Entities.Identity;
 
 namespace GetARide.Implementation.Services
 {
-    public class BookingService : IBookingService
+    public class OrderService : IOrderService
     {
-        private readonly IBookingRepository _bookingRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IDriverRepository _driverRepository;
         private readonly IPassengerRepository _passengerRepository;
         private readonly ITripRepository _tripRepository;
         private readonly IUserRepository _userRepository;
 
 
-        public BookingService(IBookingRepository bookingRepository, IDriverRepository driverRepository, IPassengerRepository passengerRepository, ITripRepository tripRepository, IUserRepository userRepository)
+        public OrderService(IOrderRepository orderRepository, IDriverRepository driverRepository, IPassengerRepository passengerRepository, ITripRepository tripRepository, IUserRepository userRepository)
         {
-            _bookingRepository = bookingRepository;
+            _orderRepository = orderRepository;
             _driverRepository = driverRepository;
             _passengerRepository = passengerRepository;
             _tripRepository = tripRepository;
             _userRepository = userRepository;
         }
-        public async Task<BaseResponse> AcceptBooking(int driverId, int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> AcceptOrder(int bookingId, int driverId)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var booking = await _bookingRepository.GetBooking(id, cancellationToken);
+            var booking = await _orderRepository.GetBooking(bookingId);
             if (booking == null)
             {
                 return new BaseResponse
                 {
-                    Message = "Booking not found",
+                    Message = "Order not found",
                     Success = false
                 };
             }
-            var driver = await _driverRepository.GetDriverById(driverId, cancellationToken);
+            var driver = await _driverRepository.GetDriverByUserId(driverId);
             if (driver == null)
             {
                 return new BaseResponse
@@ -51,75 +50,127 @@ namespace GetARide.Implementation.Services
                 };
             }
 
-            if (booking.Status == BookingStatus.Accepted)
+            if (booking.Status == OrderStatus.Accepted)
             {
                 return new BaseResponse
                 {
-                    Message = "Booking already accepted",
+                    Message = "Order already accepted",
                     Success = false
                 };
             }
-            booking.DriverId = driverId;
-            booking.Status = BookingStatus.Accepted;
+            booking.DriverId = driver.Id;
+            booking.Status = OrderStatus.Accepted;
             driver.IsAvailable = false;
-            await _bookingRepository.UpdateBooking(booking, cancellationToken);
+            await _orderRepository.UpdateBooking(booking);
             return new BaseResponse
             {
-                Message = "Booking Accepted",
+                Message = "Order Accepted",
                 Success = true
             };
         }
 
-        public async Task<BaseResponse> CreateBooking(int id, CancellationToken cancellationToken)
+        public async Task<BookingResponseModel> MakeOrder(int tripId, int passengerId)
         {
-           
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _userRepository.GetUserAsync(id, cancellationToken);
-            /* if (passenger == null)
-             {
-                 return new BaseResponse
-                 {
-                     Message = "Passenger not found",
-                     Success = false
-                 };
-             }*/
-
-            /*var driver = await _driverRepository.GetDriverById(model.DriverId, cancellationToken);
-            if (driver == null)
+            var order = await _orderRepository.GetOrderByTripId(tripId);
+            if (order!= null)
             {
-                return new BaseResponse
+                return new BookingResponseModel
                 {
-                    Message = "Driver not found",
+                    Message = "You order has been sent, a driver will soon accept your requst",
                     Success = false
                 };
             }
-            var booking = await _bookingRepository.GetBookingByReferenceNumber(model.ReferenceNumber, cancellationToken);*/
+            var passenger = await _passengerRepository.GetPassengerByUserId(passengerId);
+            var trip = await _tripRepository.GetTrip(tripId);
+            //var booking = await _orderRepository.GetOrderByReferenceNumber(model.ReferenceNumber, cancellationToken);*/
             var generateReferencenumber = $"Ref{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
+
             
-            var newBooking = new Booking
+            var newBooking = new Order
             {
                 ReferenceNumber = generateReferencenumber,
-                Status = BookingStatus.Sent,
+                Status = OrderStatus.Sent,
                 PassengerId = passenger.Id,
                 IsDeleted = false,
                 CreatedBy = passenger.Id,
                 LastModifiedBy = passenger.Id,
+                TripId = trip.Id,
+                Type = OrderType.Immediate          
             };
-           
+            newBooking.IsReady = true;
+            var booking = await _orderRepository.CreateBooking(newBooking);
 
-
-            await _bookingRepository.CreateBooking(newBooking, cancellationToken);
-            return new BaseResponse
+            var bookingDto = new OrderDTO
+            {
+                TripId = booking.TripId,                
+                Id = booking.Id,
+                ReferenceNumber = newBooking.ReferenceNumber,
+                Status = newBooking.Status,
+                PassengerId = newBooking.PassengerId,
+                Type = newBooking.Trip.Type.ToString()
+            };
+            
+            return new BookingResponseModel
             {
                 Message = "Succesfully sent",
-                Success = true
+                Success = true,
+                OrderDto = bookingDto                
             };
         }
 
-        public async Task<BookingsResponseModel> GetAllAcceptedBookings(CancellationToken cancellationToken)
+        public async Task<BookingResponseModel> MakeReservation(int tripId, int userId)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetAllAcceptedBookings(cancellationToken);
+            var order = await _orderRepository.GetOrderByTripId(tripId);
+            if (order != null)
+            {
+                return new BookingResponseModel
+                {
+                    Message = "You order has been sent, a driver will soon accept your requst",
+                    Success = false
+                };
+            }
+            var passenger = await _passengerRepository.GetPassengerByUserId(userId);
+            var trip = await _tripRepository.GetTrip(tripId);
+            //var booking = await _orderRepository.GetOrderByReferenceNumber(model.ReferenceNumber, cancellationToken);*/
+            var generateReferencenumber = $"Ref{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
+
+            var newBooking = new Order
+            {
+                ReferenceNumber = generateReferencenumber,
+                Status = OrderStatus.Sent,
+                Type = OrderType.Reservation,
+                PassengerId = passenger.Id,
+                IsDeleted = false,
+                CreatedBy = passenger.Id,
+                LastModifiedBy = passenger.Id,
+                TripId = trip.Id               
+            };
+            newBooking.IsReady = false;
+            var booking = await _orderRepository.CreateBooking(newBooking);
+
+            var bookingDto = new OrderDTO
+            {
+                TripId = booking.TripId,
+                Id = booking.Id,
+                ReferenceNumber = booking.ReferenceNumber,
+                Status = booking.Status,
+                PassengerId = booking.PassengerId,
+                Type = booking.Trip.Type.ToString(),
+                OrderType = booking.Type.ToString()
+            };
+
+            return new BookingResponseModel
+            {
+                Message = "Succesfully sent",
+                Success = true,
+                OrderDto = bookingDto
+
+            };
+        }  
+
+        public async Task<BookingsResponseModel> GetAllAcceptedOrders( )
+        {
+            var bookings = await _orderRepository.GetAllAcceptedBookings();
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -133,21 +184,21 @@ namespace GetARide.Implementation.Services
             {
                 Message = "List of accepted bookings",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
                     PassengerId = b.PassengerId,
                     DriverId = b.DriverId,
-                    TripId = b.Trip.Id
+                    TripId = b.TripId,
+                    Type = b.Trip.Type.ToString()
                 }).ToList()
             };
         }
 
-        public async Task<BookingsResponseModel> GetAllCancelledBookings(CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetAllCancelledOrders( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetAllCancelledBookings(cancellationToken);
+            var bookings = await _orderRepository.GetAllCancelledBookings();
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -161,21 +212,21 @@ namespace GetARide.Implementation.Services
             {
                 Message = "List of cancelled bookings",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
                     PassengerId = b.PassengerId,
                     DriverId = b.DriverId,
-                    TripId = b.Trip.Id
+                    TripId = b.Trip.Id,
+                    Type = b.Trip.Type.ToString()
                 }).ToList()
             };
         }
 
-        public async Task<BookingsResponseModel> GetAllDriverBookings(int id, CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetAllDriverOrders(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetAllDriverBookings(id, cancellationToken);
+            var bookings = await _orderRepository.GetAllDriverBookings(id);
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -188,20 +239,20 @@ namespace GetARide.Implementation.Services
             {
                 Message = "List of Driver's bookings",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
                     PassengerId = b.PassengerId,
-                    TripId = b.Trip.Id
+                    TripId = b.Trip.Id,
+                    Type = b.Trip.Type.ToString()
                 }).ToList()
             };
         }
 
-        public async Task<BookingsResponseModel> GetAllPassengerBookings(int id, CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetAllPassengerOrders(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetAllPassengerBookings(id, cancellationToken);
+            var bookings = await _orderRepository.GetAllPassengerBookings(id);
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -210,25 +261,26 @@ namespace GetARide.Implementation.Services
                     Success = false
                 };
             }
-            var bookingsDto = bookings.Select(b => new BookingDTO
+            var bookingsDto = bookings.Select(b => new OrderDTO
             {
                 ReferenceNumber = b.ReferenceNumber,
                 Status = b.Status,
                 DriverId = b.DriverId,
-                TripId = b.Trip.Id
+                TripId = b.Trip.Id,
+                Type = b.Trip.Type.ToString()
             }).ToList();
             return new BookingsResponseModel
             {
                 Message = "List of Passenger's bookings",
                 Success = true,
-                BookingDtos = bookingsDto
+                OrderDto = bookingsDto
             };
         }
 
         /*public async Task<BookingsResponseModel> GetAllRejectedBookings(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetAllRejectedBookings(cancellationToken);
+            var bookings = await _orderRepository.GetAllRejectedBookings(cancellationToken);
             if (bookings == null)
             {
                 return new BookingsResponseModel
@@ -242,7 +294,7 @@ namespace GetARide.Implementation.Services
             {
                 Message = "List of rejected bookings",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
@@ -253,10 +305,9 @@ namespace GetARide.Implementation.Services
             };
         }*/
        
-        public async Task<BookingsResponseModel> GetBookingsByDriverEmail(string email, CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetOrdersByDriverEmail(string email )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetBookingsByDriverEmail(email, cancellationToken);
+            var bookings = await _orderRepository.GetBookingsByDriverEmail(email);
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -269,47 +320,48 @@ namespace GetARide.Implementation.Services
             {
                 Message = "List of Driver's bookings",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
                     PassengerId = b.PassengerId,
-                    TripId = b.Trip.Id
+                    TripId = b.Trip.Id,
+                    Type = b.Trip.Type.ToString()
 
                 }).ToList()
             };
         }
 
-        public async Task<BookingResponseModel> GetBookingByReferenceNumber(string refernceNumber, CancellationToken cancellationToken)
+        public async Task<BookingResponseModel> GetOrderByReferenceNumber(string refernceNumber)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var booking = await _bookingRepository.GetBookingByReferenceNumber(refernceNumber, cancellationToken);
+            var booking = await _orderRepository.GetBookingByReferenceNumber(refernceNumber);
             if (booking == null)
             {
                 return new BookingResponseModel
                 {
-                    Message = "Booking deos not exists",
+                    Message = "Order deos not exists",
                     Success = false
                 };
             }
             return new BookingResponseModel
             {
-                BookingDto = new BookingDTO
+                OrderDto = new OrderDTO
                 {
                     ReferenceNumber = booking.ReferenceNumber,
                     Status = booking.Status,
                     PassengerId = booking.PassengerId,
                     DriverId = booking.DriverId,
-                    TripId = booking.Trip.Id
+                    TripId = booking.Trip.Id,
+                    Type = booking.Trip.Type.ToString()
                 },
-                Message = "Booking gotten ",
+                Message = "Order gotten ",
                 Success = true
             };
         }
 
-        public async Task<BookingsResponseModel> GetBookingsByPassengerEmail(string email, CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetOrdersByPassengerEmail(string email)
         {
-            var bookings = await _bookingRepository.GetBookingsByPassengerEmail(email, cancellationToken);
+            var bookings = await _orderRepository.GetBookingsByPassengerEmail(email);
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -322,21 +374,21 @@ namespace GetARide.Implementation.Services
             {
                 Message = "List of Passenger's bookings",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
                     DriverId = b.DriverId,
-                    TripId = b.Trip.Id
+                    TripId = b.Trip.Id,
+                    Type = b.Trip.Type.ToString()
 
                 }).ToList()
             };
         }
 
-        public async Task<BookingsResponseModel> GetBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetOrdersByDate(DateTime dateTime)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetBookingsByDate(dateTime, cancellationToken);
+            var bookings = await _orderRepository.GetBookingsByDate(dateTime);
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -350,22 +402,22 @@ namespace GetARide.Implementation.Services
             {
                 Message = $"List of bookings on{dateTime}",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
                     PassengerId = b.PassengerId,
                     DriverId = b.DriverId,
-                    TripId = b.Trip.Id
+                    TripId = b.Trip.Id,
+                    Type = b.Trip.Type.ToString()
 
                 }).ToList()
             };
         }
 
-        public async Task<BaseResponse> CancelBooking(int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> CancelOrder(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var booking = await _bookingRepository.GetBooking(id, cancellationToken);
+            var booking = await _orderRepository.GetBooking(id);
             if (booking == null)
             {
                 return new BaseResponse
@@ -374,28 +426,27 @@ namespace GetARide.Implementation.Services
                     Success = false
                 };
             }
-            if (booking != null && booking.Status == BookingStatus.Canceled)
+            if (booking != null && booking.Status == OrderStatus.Canceled)
             {
                 return new BaseResponse
                 {
-                    Message = "Booking already cancelled",
+                    Message = "Order already cancelled",
                     Success = false
                 };
             }
-            booking.Status = BookingStatus.Canceled;
+            booking.Status = OrderStatus.Canceled;
             booking.Driver.IsAvailable = true;
-            await _bookingRepository.UpdateBooking(booking, cancellationToken);
+            await _orderRepository.UpdateBooking(booking);
             return new BaseResponse
             {
-                Message = "Booking cancelled",
+                Message = "Order cancelled",
                 Success = false
             };
         }
 
-        public async Task<BookingsResponseModel> GetAcceptedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetAcceptedOrdersByDate(DateTime dateTime )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetAcceptedBookingsByDate(dateTime, cancellationToken);
+            var bookings = await _orderRepository.GetAcceptedBookingsByDate(dateTime);
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -409,13 +460,14 @@ namespace GetARide.Implementation.Services
             {
                 Message = $"List of bookings on{dateTime}",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
                     PassengerId = b.PassengerId,
                     DriverId = b.DriverId,
-                    TripId = b.Trip.Id
+                    TripId = b.Trip.Id,
+                    Type = b.Trip.Type.ToString()
 
                 }).ToList()
             };
@@ -424,7 +476,7 @@ namespace GetARide.Implementation.Services
        /* public async Task<BookingsResponseModel> GetRejectedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetRejectedBookingsByDate(dateTime, cancellationToken);
+            var bookings = await _orderRepository.GetRejectedBookingsByDate(dateTime, cancellationToken);
             if (bookings == null)
             {
                 return new BookingsResponseModel
@@ -438,7 +490,7 @@ namespace GetARide.Implementation.Services
             {
                 Message = $"List of bookings on{dateTime}",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
@@ -450,10 +502,9 @@ namespace GetARide.Implementation.Services
             };
         }*/
 
-        public async Task<BookingsResponseModel> GetCancelledBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetCancelledOrdersByDate(DateTime dateTime )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetCancelledBookingsByDate(dateTime, cancellationToken);
+            var bookings = await _orderRepository.GetCancelledBookingsByDate(dateTime);
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
@@ -467,7 +518,7 @@ namespace GetARide.Implementation.Services
             {
                 Message = $"List of bookings on{dateTime}",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
                     ReferenceNumber = b.ReferenceNumber,
                     Status = b.Status,
@@ -477,36 +528,50 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        Task<BookingsResponseModel> IBookingService.GetBookingByStatus(BookingStatus status, CancellationToken cancellationToken)
+        Task<BookingsResponseModel> IOrderService.GetBookingByStatus(OrderStatus status )
         {
             throw new NotImplementedException();
         }
 
-        public async Task<BookingsResponseModel> GetAllCreatedBookingsByLocation(string driversLocation, CancellationToken cancellationToken)
+        public async Task<BookingsResponseModel> GetAllCreatedOrderByLocation(string driversLocation )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var bookings = await _bookingRepository.GetAllCreatedBookingsByLocation(driversLocation, cancellationToken);
+            var bookings = await _orderRepository.GetAllCreatedBookingsByLocation(driversLocation);
             if (bookings.Count == 0)
             {
                 return new BookingsResponseModel
                 {
-                    Message = "No bookins",
+                    Message = "No bookings",
                     Success = false
                 };
             }
-           
+
             return new BookingsResponseModel
             {
                 Message = "List of Bookings",
                 Success = true,
-                BookingDtos = bookings.Select(b => new BookingDTO
+                OrderDto = bookings.Select(b => new OrderDTO
                 {
+                    Id = b.Id,
                     PassengerId = b.PassengerId,
                     StartLocation = b.Trip.PickUpLocation,
                     EndLocation = b.Trip.DropLocation,
+                    TripId = b.Trip.Id,
+                    Type = b.Trip.Type.ToString()
                 }).ToList()
             };
             throw new NotImplementedException();
         }
+
+        public async Task<int> GetAllCreatedOrdersByLocationCount(string location)
+        {
+            var bookings = await _orderRepository.GetAllCreatedBookingsByLocation(location);
+            int count = 0;
+            foreach (var booking in bookings)
+            {
+                count++;
+            }
+            return count;
+        }
+
     }
 }

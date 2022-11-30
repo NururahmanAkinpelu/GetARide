@@ -28,10 +28,9 @@ namespace GetARide.Controllers
         }
 
         [HttpPost("RegisterDriver")]
-        public async Task<IActionResult> RegisterDriver([FromForm] DriverRequestModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> RegisterDriver([FromForm] DriverRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var files = HttpContext.Request.Form;
+           /* var files = HttpContext.Request.Form;
             int i = 0;
 
             if (files != null && files.Count > 0)
@@ -51,19 +50,16 @@ namespace GetARide.Controllers
                     else model.Licence = image;
                     i++;
                 }
-            }
-
-
-            var driver = await _driverService.RegisterDriver(model, cancellationToken);
+            }*/
+            var driver = await _driverService.RegisterDriver(model);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
         [HttpPut("UpdateDriver")]
-        public async Task<IActionResult> UpdateDriver ([FromForm] UpdateDriverRequestModel model, [FromRoute]string email, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateDriver ([FromForm] UpdateDriverRequestModel model, [FromRoute]string email )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var files = HttpContext.Request.Form;
 
             if (files != null && files.Count > 0)
@@ -82,100 +78,89 @@ namespace GetARide.Controllers
                     model.Image = (image);
                 }
             }
-            var driver = await _driverService.UpdateDriver(model,email, cancellationToken);
+            var driver = await _driverService.UpdateDriver(model,email);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
-        [HttpGet("GetAllDrivers")]
-        public async Task<IActionResult> GetAlldrivers(CancellationToken cancellationToken)
+        [HttpPut("ApproveDriver/{id}")]
+        public async Task<IActionResult> ApprovedDriver([FromRoute]int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.GetAllDrivers(cancellationToken);
+            var driver = await _driverService.ApproveDriver(id);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
-        [HttpPost("ApproveDriver/{id}")]
-        public async Task<IActionResult> ApprovedDriver([FromRoute]int id, CancellationToken cancellationToken)
+        [HttpPut("ActivateDriver/{id}")]
+        public async Task<IActionResult> ActivateDriver([FromRoute] int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.ApproveDriver(id, cancellationToken);
+            var driver = await _driverService.ActivateDriver(id);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
-        [HttpPost("ActivateDriver/{id}")]
-        public async Task<IActionResult> ActivateDriver([FromRoute] int id, CancellationToken cancellationToken)
+        [HttpPut("Deactivatedriver/{id}")]
+        public async Task<IActionResult> DeactivateDriver([FromRoute] int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.ActivateDriver(id, cancellationToken);
-            if (driver.Success == true) return Ok(driver);
-
-            return BadRequest(driver);
-        }
-
-        [HttpDelete("Deactivatedriver")]
-        public async Task<IActionResult> DeactivateDriver([FromRoute] int id, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.DeactivateDriver(id, cancellationToken);
+            var driver = await _driverService.DeactivateDriver(id);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
         [HttpGet("GetApprovedDrivers")]
-        public async Task<IActionResult> GetApprovedDrivers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetApprovedDrivers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var drivers = await _driverService.GetApprovedDrivers(cancellationToken);
+            var drivers = await _driverService.GetApprovedDrivers();
             if (drivers.Success == true) return Ok(drivers);
 
             return BadRequest(drivers);
         }
 
         [HttpGet("GetUnapprovedDrivers")]
-        public async Task<IActionResult> GetUnapprovedDrivers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUnapprovedDrivers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var drivers = await _driverService.GetUnapprovedDrivers(cancellationToken);
+            var drivers = await _driverService.GetUnapprovedDrivers();
             if (drivers.Success == true) return Ok(drivers);
 
             return BadRequest(drivers);
         }
 
         [HttpGet("GetDriverWithVehicle")]
-        public async Task<IActionResult> GetDriverWithVehicle([FromRoute]string email, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDriverWithVehicle([FromRoute]string email )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.GetDriverWithVehicle(email, cancellationToken);
+            var driver = await _driverService.GetDriverWithVehicle(email);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
         [HttpGet("GetDriverById/{id}")]
-        public async Task<IActionResult> GetDriverById([FromRoute] int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDriverById([FromRoute] int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.GetDriverByid(id, cancellationToken);
+            var driver = await _driverService.GetDriverByid(id);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
         }
 
         [HttpGet("GetDriverByEmail")]
-        public async Task<IActionResult> GetDriverEmail(string email, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDriverEmail(string email )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _driverService.GetDriverByEmail(email, cancellationToken);
+            var driver = await _driverService.GetDriverByEmail(email);
             if (driver.Success == true) return Ok(driver);
 
             return BadRequest(driver);
+        }
+
+        [HttpGet("GetUnapprovedDriversCount")]
+        public async Task<IActionResult> GetUnapprovedDriversCount()
+        {
+            var count = await _driverService.GetUnapprovedDriversCount();
+            return Ok(count);
         }
 
     }

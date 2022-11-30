@@ -18,10 +18,9 @@ namespace GetARide.Implementation.Services
         {
             _roleRepository = roleRepository;
         }
-        public async Task<BaseResponse> CreateRole(RoleRequestModel model, CancellationToken cancellationToken)
+        public async Task<BaseResponse> CreateRole(RoleRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var role = await _roleRepository.GetRoleByName(model.Name, cancellationToken);
+            var role = await _roleRepository.GetRoleByName(model.Name);
             if (role != null)
             {
                 return new BaseResponse
@@ -37,7 +36,7 @@ namespace GetARide.Implementation.Services
                 Description = model.Description
             };
 
-            await _roleRepository.CreateRole(newRole, cancellationToken);
+            await _roleRepository.CreateRole(newRole);
 
             return new BaseResponse
             {
@@ -46,10 +45,9 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<RolesResponseModel> GetAllRoles(CancellationToken cancellationToken)
+        public async Task<RolesResponseModel> GetAllRoles()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var roles = await _roleRepository.GetAll(cancellationToken);
+            var roles = await _roleRepository.GetAll();
             var roleDtos = roles.Select(r => new RoleDTO 
             { 
                 Id = r.Id,
@@ -72,11 +70,9 @@ namespace GetARide.Implementation.Services
             };
         }
 
-
-        public async Task<BaseResponse> UpdateRole(RoleRequestModel model,int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> UpdateRole(RoleRequestModel model,int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var role = await _roleRepository.GetRoleById(id, cancellationToken);
+            var role = await _roleRepository.GetRoleById(id);
             if (role == null)
             {
                 return new RoleResponseModel
@@ -88,7 +84,7 @@ namespace GetARide.Implementation.Services
 
             role.Name = model.Name;
             role.Description = model.Description;
-            await _roleRepository.UpdateRole(role, cancellationToken);
+            await _roleRepository.UpdateRole(role);
 
             return new BaseResponse
             {
@@ -97,10 +93,9 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<RolesResponseModel> GetRolesByUserId(int userId, CancellationToken cancellationToken)
+        public async Task<RolesResponseModel> GetRolesByUserId(int userId)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var roles = await _roleRepository.GetRolesByUserId(userId, cancellationToken);
+            var roles = await _roleRepository.GetRolesByUserId(userId);
             var roleDtos = roles.Select(r => new RoleDTO
             {
                 Id = r.Id,

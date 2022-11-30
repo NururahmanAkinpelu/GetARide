@@ -15,15 +15,17 @@ namespace GetARide.Implementation.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
-        public UserService(IUserRepository userRepository, IRoleRepository roleRepository)
+        private readonly IDriverRepository _driverRepository;
+        public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IDriverRepository driverRepository)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
+            _driverRepository = driverRepository;
         }
 
-        public async Task<UserResponseModel> Login(UserRequestModel model, CancellationToken cancellationToken)
+        public async Task<UserResponseModel> Login(UserRequestModel model)
         {
-            var user = await _userRepository.GetUserByEmailAsync(model.Email, cancellationToken);
+            var user = await _userRepository.GetUserByEmailAsync(model.Email);
 
             if (user.IsDeleted == true)
             {
@@ -34,23 +36,41 @@ namespace GetARide.Implementation.Services
                 };
             }
          
-            else if (user != null && model.Password == user.Password)
+            else if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
             {
-               //var roles = await _roleRepository.GetRolesByUserId(user.Id, cancellationToken);
-                return new UserResponseModel
+               var userRoles = await _roleRepository.GetUserRolesByUserid(user.Id);
+                foreach (var item in userRoles )
                 {
-                    
-                    Id = user.Id,
-                    Email = user.Email,
-                    Roles = user.UserRoles.Select(x => new RoleDTO
+                    var role = await _roleRepository.GetRoleById(item.RoleId);
+                    if (role.Name == "Driver")
                     {
-                        Id = x.RoleId,
-                        Name = x.Role.Name,
-                        Description = x.Role.Description
-                    }).ToList(),
-                    Message = "Successfully logged in",
-                    Success = true
-                };
+                        var driver = await _driverRepository.GetDriverByEmail(model.Email);
+                        if (driver.IsApproved == false)
+                        {
+                            return new UserResponseModel
+                            {
+                                Id = user.Id,
+                                Message = "You have not been approved, so you can't log-in yet.",
+                                Success = false
+                            };
+                        }
+                    }
+                    return new UserResponseModel
+                    {
+
+                        Id = user.Id,
+                        Email = user.Email,
+                        Roles = user.UserRoles.Select(x => new RoleDTO
+                        {
+                            Id = x.RoleId,
+                            Name = x.Role.Name,
+                            Description = x.Role.Description
+                        }).ToList(),
+                        Message = "Successfully logged in",
+                        Success = true
+                    };
+                }
+
             }
             return new UserResponseModel
             {
@@ -60,3 +80,5 @@ namespace GetARide.Implementation.Services
         }
     }
 }
+
+

@@ -1,4 +1,5 @@
 ﻿using GetARide.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace GetARide.DTO
         public string Model { get; set; }
         public string Colour { get; set; }
         public string PlateNumber { get; set; }
-        public string Documents { get; set; }
+        public IFormFile Documents { get; set; }
         public VehicleType Type { get; set; }
         public int DriverId { get; set; }
     }

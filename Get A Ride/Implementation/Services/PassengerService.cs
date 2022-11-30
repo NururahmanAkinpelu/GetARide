@@ -26,10 +26,10 @@ namespace GetARide.Implementation.Services
             _context = context;
         }
 
-        public async Task<BaseResponse> ActivatePassenger(int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> ActivatePassenger(int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerRepository.GetPassengerById(id, cancellationToken);
+     
+            var passenger = await _passengerRepository.GetPassengerById(id);
             if (passenger == null)
             {
                 return new BaseResponse
@@ -38,26 +38,19 @@ namespace GetARide.Implementation.Services
                     Success = false
                 };
             }
-            if (passenger != null && passenger.IsDeleted == true)
-            {
-                passenger.IsDeleted = false;
-                return new BaseResponse
-                {
-                    Message = "User activated",
-                    Success = true
-                };
-            }
+            passenger.IsDeleted = false;
+            await _passengerRepository.UpdatePassenger(passenger);
             return new BaseResponse
             {
-                Message = "User alraedy activated",
-                Success = false
+                Message = "User activated",
+                Success = true
             };
         }
 
-        public async Task<BaseResponse> DeactivatePassenger(int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> DeactivatePassenger(int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerRepository.GetPassengerById(id, cancellationToken);
+        
+            var passenger = await _passengerRepository.GetPassengerById(id);
             if (passenger == null)
             {
                 return new BaseResponse
@@ -69,7 +62,7 @@ namespace GetARide.Implementation.Services
             if (passenger != null && passenger.IsDeleted == false)
             {
                 passenger.IsDeleted = true;
-                await _passengerRepository.UpdatePassenger(passenger, cancellationToken);
+                await _passengerRepository.UpdatePassenger(passenger);
                 return new BaseResponse
                 {
                     Message = "User deactivated",
@@ -83,10 +76,9 @@ namespace GetARide.Implementation.Services
             };
         }
     
-        public async Task<PassengersResponseModel> GetActivePassengers(CancellationToken cancellationToken)
+        public async Task<PassengersResponseModel> GetActivePassengers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passengers = await _passengerRepository.GetActivePassengers(cancellationToken);
+            var passengers = await _passengerRepository.GetActivePassengers();
             if (passengers.Count == 0)
             {
                 return new PassengersResponseModel
@@ -112,10 +104,9 @@ namespace GetARide.Implementation.Services
 
         }
 
-        public async Task<PassengersResponseModel> GetAllPassengers(CancellationToken cancellationToken)
+        public async Task<PassengersResponseModel> GetAllPassengers()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passengers = await _passengerRepository.GetAllPassengers(cancellationToken);
+            var passengers = await _passengerRepository.GetAllPassengers();
             if (passengers.Count == 0)
             {
                 return new PassengersResponseModel
@@ -140,10 +131,9 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<PassengersResponseModel> GetDeactivatedPassengers(CancellationToken cancellationToken)
+        public async Task<PassengersResponseModel> GetDeactivatedPassengers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passengers = await _passengerRepository.GetDeactivatedPassengers(cancellationToken);
+            var passengers = await _passengerRepository.GetDeactivatedPassengers();
             if (passengers.Count == 0)
             {
                 return new PassengersResponseModel
@@ -162,16 +152,15 @@ namespace GetARide.Implementation.Services
 
             return new PassengersResponseModel
             {
-                Message = "admin retrieved successfully",
+                Message = "passenger retrieved successfully",
                 Success = true,
                 PassengerDTOs = passengerDtos
             };
         }
 
-        public async Task<PassengerResponseModel> GetPassengerByEmail(string email, CancellationToken cancellationToken)
+        public async Task<PassengerResponseModel> GetPassengerByEmail(string email)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerRepository.GetPassengerByEmail(email, cancellationToken);
+            var passenger = await _passengerRepository.GetPassengerByEmail(email);
             if (passenger == null)
             {
                 return new PassengerResponseModel
@@ -191,16 +180,15 @@ namespace GetARide.Implementation.Services
 
             return new PassengerResponseModel
             {
-                Message = "admin retrieved succesfully",
+                Message = "passenger retrieved succesfully",
                 Success = true,
                 Data = passengerDto
             };
         }
 
-        public async Task<PassengerResponseModel> GetPassengerById(int id, CancellationToken cancellationToken)
+        public async Task<PassengerResponseModel> GetPassengerById(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerRepository.GetPassengerById(id, cancellationToken);
+            var passenger = await _passengerRepository.GetPassengerById(id);
             if (passenger == null)
             {
                 return new PassengerResponseModel
@@ -220,16 +208,15 @@ namespace GetARide.Implementation.Services
 
             return new PassengerResponseModel
             {
-                Message = "admin retrieved succesfully",
+                Message = "passenger retrieved succesfully",
                 Success = true,
                 Data = passengerDto
             };
         }
 
-        public async Task<PassengerResponseModel> RegisterPassnger(PassengerRequestModel model, CancellationToken cancellationToken)
+        public async Task<PassengerResponseModel> RegisterPassnger(PassengerRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var p = await _passengerRepository.GetPassengerByEmail(model.Email, cancellationToken);
+            var p = await _passengerRepository.GetPassengerByEmail(model.Email);
             if (p != null)
             {
                 return new PassengerResponseModel
@@ -243,13 +230,13 @@ namespace GetARide.Implementation.Services
             {
                 FullName = model.Name,
                 Email = model.Email,
-                Password = model.Password
+                Password = BCrypt.Net.BCrypt.HashPassword(model.Password)
             };
 
             Console.WriteLine($"{user.Password}");
 
-            var addUser = await _userRepository.CreateUserAsync(user, cancellationToken);
-            var role = await _roleRepository.GetRoleByName("Passenger", cancellationToken);
+            var addUser = await _userRepository.CreateUserAsync(user);
+            var role = await _roleRepository.GetRoleByName("Passenger");
             if (role == null)
             {
                 return new PassengerResponseModel
@@ -264,7 +251,7 @@ namespace GetARide.Implementation.Services
                 RoleId = role.Id
             };
             _context.UserRoles.Add(userRole);
-            var updateUser = await _userRepository.UpdateUserAsync(user, cancellationToken);
+            var updateUser = await _userRepository.UpdateUserAsync(user);
 
             var passenger = new Passenger
             {
@@ -280,13 +267,13 @@ namespace GetARide.Implementation.Services
                 PhoneNumber = passenger.PhoneNumber,
                 Email = passenger.Email,
             };
-            var addpassenger = await _passengerRepository.RegisterPassenger(passenger, cancellationToken);
+            var addpassenger = await _passengerRepository.RegisterPassenger(passenger);
 
             passenger.CreatedBy = addpassenger.Id;
             passenger.LastModifiedBy = addpassenger.Id;
             passenger.IsDeleted = false;
 
-            await _passengerRepository.UpdatePassenger(passenger, cancellationToken);
+            await _passengerRepository.UpdatePassenger(passenger);
             return new PassengerResponseModel
             {
                 Message = "passenger Successfully registered",
@@ -295,10 +282,9 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> UpdatePassenger(UpdateAPassengerRequestModel model, int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> UpdatePassenger(UpdateAPassengerRequestModel model, int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerRepository.GetPassengerById(id, cancellationToken);
+            var passenger = await _passengerRepository.GetPassengerById(id);
             if (passenger == null)
             {
                 return new BaseResponse
@@ -308,7 +294,7 @@ namespace GetARide.Implementation.Services
                 };
             }
 
-            var getUser = await _userRepository.GetUserAsync(id, cancellationToken);
+            var getUser = await _userRepository.GetUserAsync(id);
             if (getUser == null)
             {
                 return new BaseResponse
@@ -318,12 +304,12 @@ namespace GetARide.Implementation.Services
                 };
             }
             getUser.Email = model.Email;
-            await _userRepository.UpdateUserAsync(getUser, cancellationToken);
+            await _userRepository.UpdateUserAsync(getUser);
 
             passenger.User.Email = model.Email ?? passenger.User.Email;
             passenger.Name = model.Name;
             passenger.PhoneNumber = model.PhoneNumber ?? passenger.PhoneNumber;
-            await _passengerRepository.UpdatePassenger(passenger, cancellationToken);
+            await _passengerRepository.UpdatePassenger(passenger);
 
             return new BaseResponse
             {

@@ -7,8 +7,7 @@ namespace GetARide.Entities
 {
     public enum TripType
     {
-        To = 1,
-        ToAndFro,
-        Travelling,
+        Immediate = 1,
+        Reservation,
     }
 }

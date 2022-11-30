@@ -9,11 +9,12 @@ namespace GetARide.Interface.IRepository
 {
     public interface ITripRepository
     {
-        public Task<Trip> CreateTrip(Trip trip, CancellationToken cancellationToken);
-        public Task<Trip> GetTrip(int id, CancellationToken cancellationToken);
-        public Task<Trip> Updatetrip(Trip trip, CancellationToken cancellationToken);
-        public Task<ICollection<Trip>> GetOngoingTrips(CancellationToken cancellationToken);
-        public Task<ICollection<Trip>> GetEndedTrips(CancellationToken cancellationToken);
+        public Task<Trip> CreateTrip(Trip trip);
+        public Task<Trip> GetTrip(int id );
+        public Task<Trip> Updatetrip(Trip trip );
+        public Task<ICollection<Trip>> GetOngoingTrips( );
+        public Task<ICollection<Trip>> GetEndedTrips( );
+        public Task<Trip> GetTripByOrderid(int bookingId);
         /* public Task<Trip> GetTypeOfTrips(CancellationToken cancellationToken);
          public Task<Trip> EndTrip(Trip trip, CancellationToken cancellationToken);*/
     }

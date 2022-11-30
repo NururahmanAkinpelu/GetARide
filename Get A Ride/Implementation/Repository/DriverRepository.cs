@@ -17,92 +17,87 @@ namespace GetARide.Implementation.Repository
         {
             _context = context;
         }
-        public async Task<ICollection<Driver>> GetAllDrivers(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var drivers = await _context.Drivers.Include(d => d.User).ToListAsync();
-            return drivers;
-        }
 
-        public async Task<ICollection<Driver>> GetApprovedDrivers(CancellationToken cancellationToken)
+        public async Task<ICollection<Driver>> GetApprovedDrivers()
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _context.Drivers.Include(d => d.User).Where(d => d.IsApproved == true).ToListAsync();
             return drivers;
         }
 
-        public async Task<ICollection<Driver>> GetDeactivaedDrivers(CancellationToken cancellationToken)
+        public async Task<ICollection<Driver>> GetDeactivaedDrivers()
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _context.Drivers.Include(d => d.User).Where(d => d.IsDeleted == true).ToListAsync();
             return drivers;
         }
 
-        public async Task<ICollection<Driver>> GetActivatedDrivers(CancellationToken cancellationToken)
+        public async Task<ICollection<Driver>> GetActivatedDrivers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            
             var drivers = await _context.Drivers.Include(d => d.User).Where(d => d.IsDeleted == false).ToListAsync();
             return drivers;
         }
 
-        public async Task<Driver> GetDriverByEmail(string email, CancellationToken cancellationToken)
+        public async Task<Driver> GetDriverByEmail(string email)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            
             if (email == null)
             {
                 throw new ArgumentNullException();
             }
-            var passenger = await _context.Drivers.Include(d => d.User).SingleOrDefaultAsync(d => d.User.Email == email, cancellationToken);
+            var passenger = await _context.Drivers.Include(d => d.User).SingleOrDefaultAsync(d => d.User.Email == email);
             return passenger;
         }
 
-        public async Task<Driver> GetDriverById(int id, CancellationToken cancellationToken)
+        public async Task<Driver> GetDriverById(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             if (id == 0)
             {
                 throw new ArgumentNullException();
             }
-            var passenger = await _context.Drivers.Include(d => d.User).SingleOrDefaultAsync(d => d.Id == id, cancellationToken);
+            var passenger = await _context.Drivers.Include(d => d.User).SingleOrDefaultAsync(d => d.Id == id);
             return passenger;
         }
 
-        public async Task<ICollection<Driver>> GetUnapprovedDrivers(CancellationToken cancellationToken)
+        public async Task<ICollection<Driver>> GetUnapprovedDrivers()
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _context.Drivers.Include(d => d.User).Where(d => d.IsApproved == false).ToListAsync();
             return drivers;
         }
 
-        public async Task<Driver> GetDriverWithVehicles(int id, CancellationToken cancellationToken)
+        public async Task<Driver> GetDriverWithVehicles(int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var driver = await _context.Drivers.Include(d => d.User).Include(v => v.Vehicles).
                 SingleOrDefaultAsync(d => d.Id == id);
             return driver;
         }
 
-        public async Task<Driver> RegisterDriver(Driver driver, CancellationToken cancellationToken)
+        public async Task<Driver> RegisterDriver(Driver driver )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            await _context.Drivers.AddAsync(driver, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+
+            await _context.Drivers.AddAsync(driver);
+            await _context.SaveChangesAsync();
             return driver;
         }
 
-        public async Task<Driver> UpdateDriver(Driver driver, CancellationToken cancellationToken)
+        public async Task<Driver> UpdateDriver(Driver driver)
         {
-            cancellationToken.ThrowIfCancellationRequested();
              _context.Update(driver);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
             return driver;
         }
 
-        public async Task <ICollection<Driver>> GetAvailableDrivers(CancellationToken cancellationToken)
+        public async Task <ICollection<Driver>> GetAvailableDrivers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var drivers = await _context.Drivers.Include(d => d.Vehicles).Where(d => d.IsAvailable == true).ToListAsync();
             return drivers;
         }
+
+        public async Task <Driver> GetDriverByUserId(int userId)
+        {
+
+            var driver = await _context.Drivers.FirstOrDefaultAsync(p => p.UserId == userId);
+            return driver;
+        }
+
     }
 }

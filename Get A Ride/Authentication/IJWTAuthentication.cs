@@ -9,6 +9,6 @@ namespace GetARide.Authentication
 {
     public interface IJWTAuthentication
     {
-        public string GenerateToken(UserResponseModel model, CancellationToken cancellationToken);
+        public string GenerateToken(UserResponseModel model);
     }
 }

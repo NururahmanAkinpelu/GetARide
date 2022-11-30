@@ -9,12 +9,13 @@ namespace GetARide.Interface.IRepository
 {
     public interface IPassengerRepository
     {
-        public Task<Passenger> RegisterPassenger(Passenger passenger, CancellationToken cancellationToken);
-        public Task<Passenger> UpdatePassenger(Passenger passenger, CancellationToken cancellationToken);
-        public Task<ICollection<Passenger>> GetAllPassengers(CancellationToken cancellationToken);
-        public Task<Passenger> GetPassengerById(int id, CancellationToken cancellationToken);
-        public Task<Passenger> GetPassengerByEmail(string email, CancellationToken cancellationToken);
-        public Task<ICollection<Passenger>> GetActivePassengers(CancellationToken cancellationToken);
-        public Task<ICollection<Passenger>> GetDeactivatedPassengers(CancellationToken cancellationToken);
+        public Task<Passenger> RegisterPassenger(Passenger passenger );
+        public Task<Passenger> UpdatePassenger(Passenger passenger );
+        public Task<ICollection<Passenger>> GetAllPassengers();
+        public Task<Passenger> GetPassengerById(int id );
+        public Task<Passenger> GetPassengerByUserId(int userId );
+        public Task<Passenger> GetPassengerByEmail(string email );
+        public Task<ICollection<Passenger>> GetActivePassengers( );
+        public Task<ICollection<Passenger>> GetDeactivatedPassengers( );
     }
 }

@@ -67,54 +67,6 @@ namespace GetARide.Migrations
                     b.ToTable("Admins");
                 });
 
-            modelBuilder.Entity("GetARide.Entities.Booking", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DeletedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<int?>("DriverId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("LastModifiedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastModifiedOn")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("PassengerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReferenceNumber")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DriverId");
-
-                    b.HasIndex("PassengerId");
-
-                    b.ToTable("Bookings");
-                });
-
             modelBuilder.Entity("GetARide.Entities.Driver", b =>
                 {
                     b.Property<int>("Id")
@@ -359,6 +311,69 @@ namespace GetARide.Migrations
                     b.ToTable("Vehicles");
                 });
 
+            modelBuilder.Entity("GetARide.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("DeletedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DeletedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsReady")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("LastModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModifiedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("PassengerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("PassengerId");
+
+                    b.HasIndex("TripId")
+                        .IsUnique();
+
+                    b.ToTable("Bookings");
+                });
+
             modelBuilder.Entity("GetARide.Entities.Passenger", b =>
                 {
                     b.Property<int>("Id")
@@ -415,9 +430,6 @@ namespace GetARide.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("Bookingid")
-                        .HasColumnType("int");
-
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
@@ -442,6 +454,9 @@ namespace GetARide.Migrations
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("int");
 
@@ -451,7 +466,7 @@ namespace GetARide.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Bookingid")
+                    b.HasIndex("OrderId")
                         .IsUnique();
 
                     b.ToTable("Payments");
@@ -463,13 +478,13 @@ namespace GetARide.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("datetime");
 
                     b.Property<int>("DeletedBy")
@@ -496,7 +511,7 @@ namespace GetARide.Migrations
                     b.Property<string>("PickUpLocation")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("StartTime")
+                    b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime");
 
                     b.Property<int>("Status")
@@ -506,9 +521,6 @@ namespace GetARide.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookingId")
-                        .IsUnique();
 
                     b.ToTable("Trips");
                 });
@@ -522,23 +534,6 @@ namespace GetARide.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GetARide.Entities.Booking", b =>
-                {
-                    b.HasOne("GetARide.Entities.Driver", "Driver")
-                        .WithMany("Bookings")
-                        .HasForeignKey("DriverId");
-
-                    b.HasOne("GetARide.Entities.Passenger", "Passenger")
-                        .WithMany("Bookings")
-                        .HasForeignKey("PassengerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Driver");
-
-                    b.Navigation("Passenger");
                 });
 
             modelBuilder.Entity("GetARide.Entities.Driver", b =>
@@ -582,6 +577,31 @@ namespace GetARide.Migrations
                     b.Navigation("Driver");
                 });
 
+            modelBuilder.Entity("GetARide.Entities.Order", b =>
+                {
+                    b.HasOne("GetARide.Entities.Driver", "Driver")
+                        .WithMany("Bookings")
+                        .HasForeignKey("DriverId");
+
+                    b.HasOne("GetARide.Entities.Passenger", "Passenger")
+                        .WithMany("Bookings")
+                        .HasForeignKey("PassengerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GetARide.Entities.Trip", "Trip")
+                        .WithOne("Order")
+                        .HasForeignKey("GetARide.Entities.Order", "TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Passenger");
+
+                    b.Navigation("Trip");
+                });
+
             modelBuilder.Entity("GetARide.Entities.Passenger", b =>
                 {
                     b.HasOne("GetARide.Entities.Identity.User", "User")
@@ -595,31 +615,13 @@ namespace GetARide.Migrations
 
             modelBuilder.Entity("GetARide.Entities.Payment", b =>
                 {
-                    b.HasOne("GetARide.Entities.Booking", "Booking")
+                    b.HasOne("GetARide.Entities.Order", "Order")
                         .WithOne("Payment")
-                        .HasForeignKey("GetARide.Entities.Payment", "Bookingid")
+                        .HasForeignKey("GetARide.Entities.Payment", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("GetARide.Entities.Trip", b =>
-                {
-                    b.HasOne("GetARide.Entities.Booking", "Booking")
-                        .WithOne("Trip")
-                        .HasForeignKey("GetARide.Entities.Trip", "BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("GetARide.Entities.Booking", b =>
-                {
-                    b.Navigation("Payment");
-
-                    b.Navigation("Trip");
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("GetARide.Entities.Driver", b =>
@@ -645,9 +647,19 @@ namespace GetARide.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("GetARide.Entities.Order", b =>
+                {
+                    b.Navigation("Payment");
+                });
+
             modelBuilder.Entity("GetARide.Entities.Passenger", b =>
                 {
                     b.Navigation("Bookings");
+                });
+
+            modelBuilder.Entity("GetARide.Entities.Trip", b =>
+                {
+                    b.Navigation("Order");
                 });
 #pragma warning restore 612, 618
         }

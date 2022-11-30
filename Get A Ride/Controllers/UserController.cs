@@ -25,13 +25,12 @@ namespace GetARide.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(UserRequestModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login(UserRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var login = await _userService.Login(model, cancellationToken);
+            var login = await _userService.Login(model);
             if (login.Success == false) return BadRequest(login);
 
-            var token = _auth.GenerateToken(login, cancellationToken);
+            var token = _auth.GenerateToken(login);
             var response = new LoginResponse
             {
                 Data = login,

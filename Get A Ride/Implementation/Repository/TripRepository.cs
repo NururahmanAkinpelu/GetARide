@@ -17,49 +17,54 @@ namespace GetARide.Implementation.Repository
         {
             _context = context;
         }
-        public async Task<Trip> CreateTrip(Trip trip, CancellationToken cancellationToken)
+        public async Task<Trip> CreateTrip(Trip trip)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            await _context.Trips.AddAsync(trip, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+           
+            await _context.Trips.AddAsync(trip);
+            await _context.SaveChangesAsync();
             return trip;
         }
 
-        public async Task<Trip> GetTrip(int id, CancellationToken cancellationToken)
+        public async Task<Trip> GetTrip(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var trip = await _context.Trips.SingleOrDefaultAsync(t => t.Id == id);
             if (id == 0)
             {
                 throw new ArgumentNullException();
             }
             return trip;
-            throw new NotImplementedException();
+            
         }
 
-        public async Task<Trip> Updatetrip(Trip trip, CancellationToken cancellationToken)
+        public async Task<Trip> Updatetrip(Trip trip )
         {
-            cancellationToken.ThrowIfCancellationRequested();
+         
             _context.Trips.Update(trip);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
             return trip;
         }
 
-        public async Task<ICollection<Trip>> GetOngoingTrips( CancellationToken cancellationToken)
+        public async Task<ICollection<Trip>> GetOngoingTrips()
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            
             var trips = await _context.Trips.Where(t => t.Status == TripStatus.Ongoing).ToListAsync();
             return trips;
         }
 
-        public async Task<ICollection<Trip>> GetEndedTrips(CancellationToken cancellationToken)
+        public async Task<ICollection<Trip>> GetEndedTrips()
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var trips = await _context.Trips.Where(t => t.Status == TripStatus.Ended).ToListAsync();
             return trips;
         }
 
-        
+        public async Task<Trip> GetTripByOrderid(int bookingId)
+        {
+          
+            var trip = await _context.Trips.Include(t => t.Order).Where(t => t.Order.Id == bookingId).SingleOrDefaultAsync();
+            return trip;
+        }
+
+
 
         /*public async Task<Trip> GetTypeOfTrips(CancellationToken cancellationToken)
         {

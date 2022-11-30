@@ -19,59 +19,59 @@ namespace GetARide.Implementation.Repository
             _context = context;
         }
 
-        public async Task <ICollection<Passenger>> GetAllPassengers(CancellationToken cancellationToken)
+        public async Task <ICollection<Passenger>> GetAllPassengers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
+        
             var passengers = await _context.Passengers.Include(p => p.User).ToListAsync();
             return passengers;
         }
 
-        public async Task<Passenger> GetPassengerByEmail(string email, CancellationToken cancellationToken)
+        public async Task<Passenger> GetPassengerByEmail(string email )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _context.Passengers.Where(p => p.User.Email.ToLower() == email.ToLower()).SingleOrDefaultAsync(cancellationToken);
+            var passenger = await _context.Passengers.Where(p => p.User.Email.ToLower() == email.ToLower()).SingleOrDefaultAsync();
             return passenger;
         }
 
-        public async Task<Passenger> GetPassengerById(int id, CancellationToken cancellationToken)
+        public async Task<Passenger> GetPassengerById(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             if (id == 0)
             {
                 throw new ArgumentNullException();
             }
-            var passenger = await _context.Passengers.Include(x => x.User).SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var passenger = await _context.Passengers.Include(x => x.User).SingleOrDefaultAsync(x => x.Id == id);
             return passenger;
         }
 
-        public async Task<Passenger> RegisterPassenger(Passenger passenger, CancellationToken cancellationToken)
+        public async Task<Passenger> RegisterPassenger(Passenger passenger )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            await _context.Passengers.AddAsync(passenger, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.Passengers.AddAsync(passenger);
+            await _context.SaveChangesAsync();
             return passenger;
         }
 
-        public async Task<Passenger> UpdatePassenger(Passenger passenger, CancellationToken cancellationToken)
+        public async Task<Passenger> UpdatePassenger(Passenger passenger )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             _context.Update(passenger);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
             return passenger;
         }
 
-        public async Task<ICollection<Passenger>> GetActivePassengers(CancellationToken cancellationToken)
+        public async Task<ICollection<Passenger>> GetActivePassengers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var passengers = await _context.Passengers.Include(p => p.User).Where(x => x.IsDeleted == false).ToListAsync();
             return passengers;
         }
 
-        public async Task<ICollection<Passenger>> GetDeactivatedPassengers(CancellationToken cancellationToken)
+        public async Task<ICollection<Passenger>> GetDeactivatedPassengers( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var passengers = await _context.Passengers.Include(x => x.User).Where(x => x.IsDeleted == true).ToListAsync();
             return passengers;
+        }
+
+        public async Task<Passenger> GetPassengerByUserId(int userId )
+        {
+            var passenger = await _context.Passengers.FirstOrDefaultAsync(p => p.UserId == userId);
+            return passenger;
         }
     }
 }

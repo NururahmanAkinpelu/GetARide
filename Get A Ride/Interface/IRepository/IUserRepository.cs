@@ -10,12 +10,11 @@ namespace GetARide.Interface.IRepository
 {
     public interface IUserRepository
     {
-        public Task<User> GetUserAsync(int id, CancellationToken cancellationToken);
-        public Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken);
-        public Task<User> CreateUserAsync(User user, CancellationToken cancellationToken);
-        public Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken);
-        public Task<ICollection<User>> GetAllUsersAsync(CancellationToken cancellationToken);
-        
-       
+        public Task<User> GetUserAsync(int id  );
+        public Task<User> GetUserByEmailAsync(string email);
+        public Task<User> CreateUserAsync(User user );
+        public Task<User> UpdateUserAsync(User user );
+        public Task<ICollection<User>> GetAllUsersAsync();
+        /*public Task<User> DeactivateUser(User user, CancellationToken cancellationToken);*/
     }
 }

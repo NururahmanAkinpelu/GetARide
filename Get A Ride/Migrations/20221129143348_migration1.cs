@@ -30,6 +30,32 @@ namespace GetARide.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Trips",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    PickUpLocation = table.Column<string>(type: "text", nullable: true),
+                    DropLocation = table.Column<string>(type: "text", nullable: true),
+                    StartTime = table.Column<DateTime>(type: "datetime", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "datetime", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: false),
+                    DeletedBy = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: false),
+                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: false),
+                    LastModifiedBy = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trips", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -95,6 +121,7 @@ namespace GetARide.Migrations
                     License = table.Column<string>(type: "text", nullable: true),
                     IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IsAvailable = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime", nullable: false),
                     DeletedBy = table.Column<int>(type: "int", nullable: false),
@@ -189,6 +216,7 @@ namespace GetARide.Migrations
                     PlateNumber = table.Column<string>(type: "text", nullable: true),
                     Documents = table.Column<string>(type: "text", nullable: true),
                     IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     DriverId = table.Column<int>(type: "int", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime", nullable: false),
                     DeletedBy = table.Column<int>(type: "int", nullable: false),
@@ -216,9 +244,12 @@ namespace GetARide.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     ReferenceNumber = table.Column<string>(type: "text", nullable: true),
-                    DriverId = table.Column<int>(type: "int", nullable: false),
+                    DriverId = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime", nullable: true),
                     PassengerId = table.Column<int>(type: "int", nullable: false),
+                    TripId = table.Column<int>(type: "int", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime", nullable: false),
                     DeletedBy = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -235,11 +266,17 @@ namespace GetARide.Migrations
                         column: x => x.DriverId,
                         principalTable: "Drivers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Bookings_Passengers_PassengerId",
                         column: x => x.PassengerId,
                         principalTable: "Passengers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -253,7 +290,7 @@ namespace GetARide.Migrations
                     Amount = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
                     ReferenceNumber = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
                     Ispayed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Bookingid = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
                     PaymentMethod = table.Column<int>(type: "int", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime", nullable: false),
                     DeletedBy = table.Column<int>(type: "int", nullable: false),
@@ -267,40 +304,8 @@ namespace GetARide.Migrations
                 {
                     table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Payments_Bookings_Bookingid",
-                        column: x => x.Bookingid,
-                        principalTable: "Bookings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Trips",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    PickUpLocation = table.Column<string>(type: "text", nullable: true),
-                    DropLocation = table.Column<string>(type: "text", nullable: true),
-                    StartTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    BookingId = table.Column<int>(type: "int", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime", nullable: false),
-                    DeletedBy = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: false),
-                    LastModifiedOn = table.Column<DateTime>(type: "datetime", nullable: false),
-                    LastModifiedBy = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Trips", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Trips_Bookings_BookingId",
-                        column: x => x.BookingId,
+                        name: "FK_Payments_Bookings_OrderId",
+                        column: x => x.OrderId,
                         principalTable: "Bookings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -323,6 +328,12 @@ namespace GetARide.Migrations
                 column: "PassengerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookings_TripId",
+                table: "Bookings",
+                column: "TripId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Drivers_UserId",
                 table: "Drivers",
                 column: "UserId",
@@ -335,15 +346,9 @@ namespace GetARide.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_Bookingid",
+                name: "IX_Payments_OrderId",
                 table: "Payments",
-                column: "Bookingid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Trips_BookingId",
-                table: "Trips",
-                column: "BookingId",
+                column: "OrderId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -371,9 +376,6 @@ namespace GetARide.Migrations
                 name: "Payments");
 
             migrationBuilder.DropTable(
-                name: "Trips");
-
-            migrationBuilder.DropTable(
                 name: "UserRoles");
 
             migrationBuilder.DropTable(
@@ -390,6 +392,9 @@ namespace GetARide.Migrations
 
             migrationBuilder.DropTable(
                 name: "Passengers");
+
+            migrationBuilder.DropTable(
+                name: "Trips");
 
             migrationBuilder.DropTable(
                 name: "Users");

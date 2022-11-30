@@ -14,7 +14,7 @@ namespace GetARide.Entities
         public string Email { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
-        public ICollection<Booking> Bookings { get; set; }
+        public ICollection<Order> Orders { get; set; }
         
     }
 }

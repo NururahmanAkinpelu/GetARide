@@ -62,8 +62,8 @@ namespace GetARide
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IVehicleService, VehicleService>();
 
-            services.AddScoped<IBookingRepository, BookingRepository>();
-            services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderService, OrderService>();
 
             services.AddScoped<ITripRepository, TripRepository>();
             services.AddScoped<ITripService, TripService>();
@@ -120,6 +120,7 @@ namespace GetARide
 
             app.UseEndpoints(endpoints =>
             {
+                
                 endpoints.MapControllers();
             });
         }

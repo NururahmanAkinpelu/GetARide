@@ -25,45 +25,45 @@ namespace GetARide.Implementation.Repository
             return vehicle;
         }*/
 
-        public async  Task<Vehicle> RegisterVehicle(Vehicle vehicle, CancellationToken cancellationtoken)
+        public async  Task<Vehicle> RegisterVehicle(Vehicle vehicle )
         {
-            cancellationtoken.ThrowIfCancellationRequested();
-            await _context.AddAsync(vehicle, cancellationtoken);
-            await _context.SaveChangesAsync(cancellationtoken);
+            await _context.AddAsync(vehicle);
+            await _context.SaveChangesAsync();
             return vehicle;
         }
 
-        public async  Task<Vehicle> UpdateVehicle(Vehicle vehicle, CancellationToken cancellationToken)
+        public async  Task<Vehicle> UpdateVehicle(Vehicle vehicle )
         {
-            cancellationToken.ThrowIfCancellationRequested();
+          
             _context.Update(vehicle);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
             return vehicle;
         }
 
-        public async Task<Vehicle> GetVehicleById(int id, CancellationToken cancellationToken)
+        public async Task<Vehicle> GetVehicleById(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (id == 0)
-            {
-                throw new ArgumentNullException();
-            }
-            var vehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Id == id, cancellationToken);
+            
+            var vehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Id == id);
             return vehicle;
         }
 
-        public async  Task<Vehicle> GetVehicleByPlateNumber(string plateNumber, CancellationToken cancellationToken)
+        public async  Task<Vehicle> GetVehicleByPlateNumber(string plateNumber )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var vehicle = await _context.Vehicles.Include(v => v.Driver).SingleOrDefaultAsync(v => v.PlateNumber == plateNumber, cancellationToken);
+            var vehicle = await _context.Vehicles.Include(v => v.Driver).SingleOrDefaultAsync(v => v.PlateNumber == plateNumber);
             return vehicle;
         }
 
-        public async Task<ICollection<Vehicle>> GetAllDriversVehicles(int driverId, CancellationToken cancellationToken)
+        public async Task<ICollection<Vehicle>> GetAllDriversVehicles(int driverId )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var vehicles = await _context.Vehicles.Include(v => v.Driver).Where(v => v.Driver.UserId == driverId).ToListAsync();
             return vehicles;
+        }
+
+        public async Task<Vehicle> DeleteVehicle(Vehicle vehicle )
+        {
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+            return vehicle;
         }
     }
 }

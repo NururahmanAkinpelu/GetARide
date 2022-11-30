@@ -17,21 +17,21 @@ namespace GetARide.Implementation.Repository
         {
             _context = context;
         }
-        public async Task<Role> CreateRole(Role role, CancellationToken cancellationToken)
+        public async Task<Role> CreateRole(Role role )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            await _context.Roles.AddAsync(role, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+         
+            await _context.Roles.AddAsync(role);
+            await _context.SaveChangesAsync();
             return role;
         }
-        public async Task<Role> GetRoleById(int id, CancellationToken cancellationToken)
+        public async Task<Role> GetRoleById(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
+   
             if (id == 0)
             {
                 throw new ArgumentNullException();
             }
-            var role = await _context.Roles.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            var role = await _context.Roles.FirstOrDefaultAsync(u => u.Id == id);
             if (role == null)
             {
                 return null;
@@ -39,40 +39,46 @@ namespace GetARide.Implementation.Repository
             return role;
         }
 
-        public async Task<Role> UpdateRole(Role role, CancellationToken cancellationToken)
+        public async Task<Role> UpdateRole(Role role)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+        
             _context.Roles.Update(role);
             await _context.SaveChangesAsync();
             return role;
         }
-        public async Task<Role> GetRoleByName(string name, CancellationToken cancellationToken)
+        public async Task<Role> GetRoleByName(string name )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             if (name == null)
             {
                 throw new ArgumentNullException();
             }
-            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == name, cancellationToken);
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == name);
             return role;
         }
 
-        public async Task<ICollection<Role>> GetRolesByUserId(int userId, CancellationToken cancellationToken)
+        public async Task<ICollection<Role>> GetRolesByUserId(int userId )
         {
-            cancellationToken.ThrowIfCancellationRequested();
+      
             var roles = await _context.Roles.Where(x => x.Id == userId).Select(r => new Role
             {
                 Name = r.Name,
                 Description = r.Description
-            }).ToListAsync(cancellationToken);
+            }).ToListAsync();
             return roles;
         }
 
-        public async Task<ICollection<Role>> GetAll(CancellationToken cancellationToken)
+        public async Task<ICollection<Role>> GetAll( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
+           
             var role = await _context.Roles.Include(r => r.UserRole).ToListAsync();
             return role;
+        }
+
+        public async Task<ICollection<UserRoles>> GetUserRolesByUserid(int userId )
+        {
+    
+            var userRoles = await _context.UserRoles.Include(x => x.Role).Where(x => x.UserId == userId).ToListAsync();
+            return userRoles;          
         }
     }
 }

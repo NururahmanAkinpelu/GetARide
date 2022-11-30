@@ -18,9 +18,8 @@ namespace GetARide.Authentication
         {
             _key = key;
         }
-        public string GenerateToken(UserResponseModel model, CancellationToken cancellationToken)
+        public string GenerateToken(UserResponseModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.ASCII.GetBytes(_key);
             var claims = new List<Claim>();

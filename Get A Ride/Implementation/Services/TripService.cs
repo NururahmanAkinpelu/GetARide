@@ -17,10 +17,9 @@ namespace GetARide.Implementation.Services
         {
             _tripRepository = tripRepository;
         }
-        public async Task<BaseResponse> EndTrip( int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> EndTrip( int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var trip = await _tripRepository.GetTrip(id, cancellationToken);
+            var trip = await _tripRepository.GetTrip(id);
             if (trip == null)
             {
                 return new BaseResponse
@@ -38,8 +37,10 @@ namespace GetARide.Implementation.Services
                     Success = false
                 };
             }
+            trip.EndTime = DateTime.UtcNow;
             trip.Status = TripStatus.Ended;
-            await _tripRepository.Updatetrip(trip, cancellationToken);
+            trip.Order.Driver.IsAvailable = true;
+            await _tripRepository.Updatetrip(trip);
             return new BaseResponse
             {
                 Message = "trip ended succesfully",
@@ -47,31 +48,65 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> CreateTrip(TripRequestModel model, CancellationToken cancellationToken)
+        public async Task<TripResponseModel> CreateTrip(TripRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var trip = new Trip
-            {
+            var newTrip = new Trip
+            {                
                 PickUpLocation = model.PickUpLocation,
                 DropLocation = model.DropLocation,
-                BookingId = model.BookingId,
-                Type = model.TripType
+                Type = TripType.Immediate
             };
-            
-            trip.Status = TripStatus.Ongoing;
-            await _tripRepository.CreateTrip(trip, cancellationToken);
 
-            return new BaseResponse
+            newTrip.Status = TripStatus.NotStarted;
+            await _tripRepository.CreateTrip(newTrip);
+            var tripDto = new TripDTO
             {
-                Message = "trip started",
-                Success = true
+                Id = newTrip.Id,
+                PickUpLocation = newTrip.PickUpLocation,
+                DropLocation = newTrip.DropLocation,
+                TripType = newTrip.Type,
+            };
+
+            return new TripResponseModel
+            {
+                Message = "Created",
+                Success = true,
+                TripDto = tripDto
             };
         }
 
-        public async Task<TripsResponseModel> GetEndedTrips(CancellationToken cancellationToken)
+        public async Task<TripResponseModel> MakeReservation(TripRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var trips = await _tripRepository.GetEndedTrips(cancellationToken);
+            var newTrip = new Trip
+            {
+                PickUpLocation = model.PickUpLocation,
+                DropLocation = model.DropLocation,
+                Type = TripType.Reservation,
+                Date = model.Date
+            };
+
+            newTrip.Status = TripStatus.NotStarted;
+            await _tripRepository.CreateTrip(newTrip);
+            var tripDto = new TripDTO
+            {
+                Id = newTrip.Id,
+                PickUpLocation = newTrip.PickUpLocation,
+                DropLocation = newTrip.DropLocation,
+                Date = newTrip.Date,
+                TripType = newTrip.Type
+            };
+
+            return new TripResponseModel
+            {
+                Message = "Order Sent",
+                Success = true,
+                TripDto = tripDto
+            };
+        }
+
+        public async Task<TripsResponseModel> GetEndedTrips()
+        {
+            var trips = await _tripRepository.GetEndedTrips();
             if (trips == null)
             {
                 return new TripsResponseModel
@@ -97,10 +132,9 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<TripsResponseModel> GetOngoingTrips(CancellationToken cancellationToken)
+        public async Task<TripsResponseModel> GetOngoingTrips()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var trips = await _tripRepository.GetOngoingTrips(cancellationToken);
+            var trips = await _tripRepository.GetOngoingTrips();
             if (trips.Count == 0)
             {
                 return new TripsResponseModel
@@ -126,10 +160,9 @@ namespace GetARide.Implementation.Services
             throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse> StartTrip(int tripid, CancellationToken cancellationToken)
+        public async Task<BaseResponse> StartTrip(int tripid)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var trip = await _tripRepository.GetTrip(tripid, cancellationToken);
+            var trip = await _tripRepository.GetTrip(tripid);
             if (trip.Status == TripStatus.Ongoing)
             {
                 return new BaseResponse
@@ -138,11 +171,26 @@ namespace GetARide.Implementation.Services
                     Success = false
                 };
             }
+            trip.StartTime = DateTime.UtcNow;
+            trip.Status = TripStatus.Ongoing;
+            trip.StartTime = DateTime.UtcNow;
+            await _tripRepository.Updatetrip(trip);
             return new BaseResponse
             {
                 Message = "Trip started successfully",
                 Success = true
             };
+        }
+
+        public async Task<int> GetOngoingTripsCount()
+        {
+            var trips = await _tripRepository.GetOngoingTrips();
+            int count = 0;
+            foreach (var trip in trips)
+            {
+                count++;
+            }
+            return count;
         }
     }
 }

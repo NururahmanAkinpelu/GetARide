@@ -9,6 +9,6 @@ namespace GetARide.Interface.IService
 {
     public interface IUserService
     {
-        public Task<UserResponseModel> Login(UserRequestModel model, CancellationToken cancellationToken);
+        public Task<UserResponseModel> Login(UserRequestModel model );
     }
 }

@@ -22,40 +22,36 @@ namespace GetARide.Controllers
         }
 
         [HttpPost("CreateRole")]
-        public async Task<IActionResult> Create([FromForm] RoleRequestModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromForm] RoleRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var response = await _roleservice.CreateRole(model, cancellationToken);
+            var response = await _roleservice.CreateRole(model);
             if (response.Success == true) return Ok(response);
 
             return BadRequest(response);
         }
 
         [HttpGet("GetRoleByUserId")]
-        public async Task<IActionResult> GetByUserId([FromRoute] int userId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetByUserId([FromRoute] int userId)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var response = await _roleservice.GetRolesByUserId(userId, cancellationToken);
+            var response = await _roleservice.GetRolesByUserId(userId);
             if (response.Success == true) return Ok(response);
 
             return BadRequest(response);
         }
 
         [HttpGet("GetAllRoles")]
-        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAll()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var response = await _roleservice.GetAllRoles(cancellationToken);
+            var response = await _roleservice.GetAllRoles();
             if (response.Success == true) return Ok(response);
 
             return BadRequest(response);
         }
         
         [HttpPut("UpdateRole")]
-        public async Task<IActionResult> Update([FromBody] RoleRequestModel model, int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update([FromBody] RoleRequestModel model, int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var response = await _roleservice.UpdateRole(model, id, cancellationToken);
+            var response = await _roleservice.UpdateRole(model, id);
             if (response.Success == true) return Ok(response);
 
             return BadRequest(response);

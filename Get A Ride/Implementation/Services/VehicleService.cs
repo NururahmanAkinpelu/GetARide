@@ -5,6 +5,7 @@ using GetARide.Interface.IRepository;
 using GetARide.Interface.IService;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,17 +16,19 @@ namespace GetARide.Implementation.Services
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IDriverRepository _driverRepository;
         private readonly ApplicationContext _context;
-        public  VehicleService(IVehicleRepository vehicleRepository, IUserRepository userRepository, ApplicationContext context)
+        public  VehicleService(IVehicleRepository vehicleRepository, IUserRepository userRepository, IDriverRepository driverRepository, ApplicationContext context)
         {
             _vehicleRepository = vehicleRepository;
             _userRepository = userRepository;
+            _driverRepository = driverRepository;
             _context = context;
         }
-        public async Task<BaseResponse> DeleteVehicle(int id, CancellationToken cancellationToken)
+
+        public async Task<BaseResponse> DeleteVehicle(int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var vehicle = await _vehicleRepository.GetVehicleById(id, cancellationToken);
+            var vehicle = await _vehicleRepository.GetVehicleById(id);
             if (vehicle == null)
             {
                 return new BaseResponse
@@ -34,7 +37,7 @@ namespace GetARide.Implementation.Services
                     Success = false
                 };
             }
-            vehicle.IsDeleted = true;
+            await _vehicleRepository.DeleteVehicle(vehicle);
 
             return new BaseResponse
             {
@@ -43,10 +46,10 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> RegisterVehicle(VehicleRequestModel model, CancellationToken cancellationToken, int driverId = 27)
+        public async Task<BaseResponse> RegisterVehicle(VehicleRequestModel model, int driverId = 27)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var getVehicle = await _vehicleRepository.GetVehicleByPlateNumber(model.PlateNumber, cancellationToken);
+
+            var getVehicle = await _vehicleRepository.GetVehicleByPlateNumber(model.PlateNumber);
             if (getVehicle != null)
             {
                 return new BaseResponse
@@ -62,17 +65,35 @@ namespace GetARide.Implementation.Services
                 Model = model.Model,
                 Colour = model.Colour,
                 PlateNumber = model.PlateNumber,
-                Documents = model.Documents,
                 Type = model.Type,
                 DriverId = driverId
             };
-            var addVehicle = await _vehicleRepository.RegisterVehicle(vehicle, cancellationToken);
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory() + "//Document//");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            if (model.Documents != null)
+            {
+
+                var fileName = Path.GetFileNameWithoutExtension(model.Documents.FileName);
+                var filePath = Path.Combine(folderPath, model.Documents.FileName);
+                var extension = Path.GetExtension(model.Documents.FileName);
+                if (!Directory.Exists(filePath))
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.Documents.CopyToAsync(stream);
+                    }
+                    vehicle.Documents = fileName;
+                }
+            }
+            var addVehicle = await _vehicleRepository.RegisterVehicle(vehicle);
             vehicle.CreatedBy = addVehicle.DriverId;
             vehicle.LastModifiedBy = addVehicle.DriverId;
             vehicle.IsDeleted = false;
             vehicle.IsApproved = false;
-
-            await _vehicleRepository.UpdateVehicle(vehicle, cancellationToken);
+         
 
             return new BaseResponse
             {
@@ -82,9 +103,9 @@ namespace GetARide.Implementation.Services
             throw new NotImplementedException();
         }
 
-        public async Task<BaseResponse> ApproveVehicle(int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> ApproveVehicle(int id )
         {
-            var vehicle = await _vehicleRepository.GetVehicleById(id, cancellationToken);
+            var vehicle = await _vehicleRepository.GetVehicleById(id);
             if (vehicle == null)
             {
                 return new BaseResponse
@@ -109,9 +130,9 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> UpdateVehicle(UpdateVehicleRequestModel model, int id, CancellationToken cancellationToken)
+        public async Task<BaseResponse> UpdateVehicle(UpdateVehicleRequestModel model, int id )
         {
-            var vehicle = await _vehicleRepository.GetVehicleById(id, cancellationToken);
+            var vehicle = await _vehicleRepository.GetVehicleById(id);
             if (vehicle != null)
             {
                 return new BaseResponse
@@ -126,7 +147,7 @@ namespace GetARide.Implementation.Services
             vehicle.PlateNumber = model.PlateNumber;
             vehicle.Documents = model.Documents;
 
-            await _vehicleRepository.UpdateVehicle(vehicle, cancellationToken);
+            await _vehicleRepository.UpdateVehicle(vehicle);
             return new BaseResponse
             {
                 Message = "Vehicle updated successfully",
@@ -134,11 +155,10 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<VehiclesResponseModel> GetAllDriversVehicle(int userId, CancellationToken cancellationToken)
+        public async Task<VehiclesResponseModel> GetAllDriversVehicle(int userId)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var driver = await _userRepository.GetUserAsync(userId, cancellationToken);
-            var vehicles = await _vehicleRepository.GetAllDriversVehicles(driver.Id, cancellationToken);
+            var driver = await _userRepository.GetUserAsync(userId);
+            var vehicles = await _vehicleRepository.GetAllDriversVehicles(driver.Id);
             if (vehicles.Count == 0)
             {
                 return new VehiclesResponseModel
@@ -153,15 +173,28 @@ namespace GetARide.Implementation.Services
                 Success = true,
                 Data = vehicles.Select(v => new VehicleDTO
                 {
+                    Id = v.Id,
                     Name = v.Name,
                     Model = v.Model,
                     Colour = v.Colour,
                     PlateNumber = v.PlateNumber,
-                    Type = v.Type,
+                    Documents = v.Documents,
+                    Type = v.Type
 
                 }).ToList()
             };
             
+        }
+
+        public async Task<int> GetVehiclesCount(int id)
+        {
+            var vehicles = await _vehicleRepository.GetAllDriversVehicles(id);
+            int count = 0;
+            foreach (var vehicle in vehicles)
+            {
+                count++;
+            }
+            return count;
         }
     }
 }

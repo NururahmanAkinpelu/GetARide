@@ -27,10 +27,9 @@ namespace GetARide.Controllers
         }
 
         [HttpPost("RegisterAdmin")]
-        public async Task<IActionResult> RegisterAdmin([FromForm] AdminRequestModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> RegisterAdmin([FromForm] AdminRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.RegisterAdmin(model, cancellationToken);
+            var admin = await _adminService.RegisterAdmin(model);
 
             if (admin.Success == true) return Ok(admin);
 
@@ -38,70 +37,63 @@ namespace GetARide.Controllers
         }
 
         [HttpPut("UpdateAdmin/{id}")]
-        public async Task<IActionResult> UpdateAdmin([FromRoute]UpdateAdminRequestModel model,[FromRoute]int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAdmin([FromRoute]UpdateAdminRequestModel model,[FromRoute]int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.UpdateAdmin(model, id, cancellationToken);
+            var admin = await _adminService.UpdateAdmin(model, id);
             if (admin.Success == false) return BadRequest(admin);
 
             return Ok(admin);
         }
 
         [HttpGet("GetAdminInfo/{id}")]
-        public async Task<IActionResult> GetAdminInfo([FromRoute]int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAdminInfo([FromRoute]int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.GetAdmin(id, cancellationToken);
+            var admin = await _adminService.GetAdmin(id);
             if (admin.Success == true) return Ok(admin);
 
             return BadRequest(admin);
         }
 
         [HttpGet("GetAllAdmins")]
-        public async Task<IActionResult> GetAllAdmins(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllAdmins( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.GetAllAdmins(cancellationToken);
+            var admin = await _adminService.GetAllAdmins();
             if (admin.Success == true) return Ok(admin);
 
             return BadRequest(admin);
         }
 
-        [HttpPost("ActivateAdmin/{id}")]
-        public async Task<IActionResult> ActivateAdmin([FromRoute]int id, CancellationToken cancellationToken)
+        [HttpPut("ActivateAdmin/{id}")]
+        public async Task<IActionResult> ActivateAdmin([FromRoute]int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.ActivateAdmin(id, cancellationToken);
+            var admin = await _adminService.ActivateAdmin(id);
             if (admin.Success == true) return Ok(admin);
 
             return BadRequest(admin);
         }
 
-        [HttpPost("DeactivateAdmin/{id}")]
-        public async Task<IActionResult> DectivateAdmin([FromRoute] int id, CancellationToken cancellationToken)
+        [HttpPut("DeactivateAdmin/{id}")]
+        public async Task<IActionResult> DectivateAdmin([FromRoute] int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _adminService.DeActivateAdmin(id, cancellationToken);
+            var admin = await _adminService.DeActivateAdmin(id);
             if (admin.Success == true) return Ok(admin);
 
             return BadRequest(admin);
         }
 
         [HttpGet("GetAllActivatedAdmins")]
-        public async Task<IActionResult> GetAllActivatedAdmins (CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllActivatedAdmins ( )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admins = await _adminService.GetAllActiveAdmins(cancellationToken);
+            var admins = await _adminService.GetAllActiveAdmins();
             if (admins.Success == true) return Ok(admins);
 
             return BadRequest(admins);
         }
 
         [HttpGet("GetAllDeactivatedAdmins")]
-        public async Task<IActionResult> GetAllDeactivatedAdmins (CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllDeactivatedAdmins ()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admins = await _adminService.GetAllDeactivatedAdmins(cancellationToken);
+            var admins = await _adminService.GetAllDeactivatedAdmins();
             if (admins.Success == true) return Ok(admins);
 
             return BadRequest(admins);

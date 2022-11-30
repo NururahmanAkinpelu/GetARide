@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace GetARide.Entities
 {
-    public enum BookingStatus
+    public enum OrderType
     {
-        Sent =1,
-        Accepted,
-        Canceled,
+        Immediate =1,
+        Reservation
     }
 }

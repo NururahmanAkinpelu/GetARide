@@ -25,90 +25,81 @@ namespace GetARide.Controllers
         }
 
         [HttpPost("RegisterPassenger")]
-        public async Task<IActionResult> RegisterPassenger([FromForm]PassengerRequestModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> RegisterPassenger([FromForm]PassengerRequestModel model)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerService.RegisterPassnger(model, cancellationToken);
+            var passenger = await _passengerService.RegisterPassnger(model);
             if (passenger.Success == true) return Ok(passenger);
 
             return BadRequest(passenger);
         }
 
         [HttpPut("UpdatePassenger/{id}")]
-        public async Task<IActionResult> UpdatePassenger([FromForm]UpdateAPassengerRequestModel model,[FromRoute]int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdatePassenger([FromForm]UpdateAPassengerRequestModel model,[FromRoute]int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerService.UpdatePassenger(model, id, cancellationToken);
+            var passenger = await _passengerService.UpdatePassenger(model, id);
             if (passenger.Success == true) return Ok(passenger);
 
             return BadRequest(model);
         }
 
         [HttpGet("GetPassengerById/{id}")]
-        public async Task<IActionResult> GetPassengerById([FromRoute]int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPassengerById([FromRoute]int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerService.GetPassengerById(id, cancellationToken);
+            var passenger = await _passengerService.GetPassengerById(id);
             if (passenger.Success == true) return Ok(passenger);
 
             return BadRequest(passenger);
         }
 
         [HttpGet("GetPassengerByEmail")]
-        public async Task<IActionResult> GetPassengerByEmail(string email, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPassengerByEmail(string email)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerService.GetPassengerByEmail(email, cancellationToken);
+            var passenger = await _passengerService.GetPassengerByEmail(email);
             if (passenger.Success == true) return Ok(passenger);
 
             return BadRequest(passenger);
         }
 
         [HttpGet("GetAllPassengers")]
-        public async Task<IActionResult> GetAllPassenger(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllPassenger()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passengers = await _passengerService.GetAllPassengers(cancellationToken);
+            var passengers = await _passengerService.GetAllPassengers();
             if (passengers.Success == true) return Ok(passengers);
 
             return BadRequest(passengers);
         }
 
         [HttpGet("GetActivePassengers")]
-        public async Task<IActionResult> GetActivatedPassengers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetActivatedPassengers()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passengers = await _passengerService.GetActivePassengers(cancellationToken);
+            var passengers = await _passengerService.GetActivePassengers();
             if (passengers.Success == true) return Ok(passengers);
 
             return BadRequest(passengers);
         }
 
         [HttpGet("GetDeactivatedPassengers")]
-        public async Task<IActionResult> GetDeactivatedPassengers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDeactivatedPassengers()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passengers = await _passengerService.GetDeactivatedPassengers(cancellationToken);
+            var passengers = await _passengerService.GetDeactivatedPassengers();
             if (passengers.Success == true) return Ok(passengers);
 
             return BadRequest(passengers);
         }
 
-        [HttpPost("ActivatePassenger/{id}")]
-        public async Task<IActionResult> ActivatePassenger([FromRoute] int id, CancellationToken cancellationToken)
+        [HttpPut("ActivatePassenger/{id}")]
+        public async Task<IActionResult> ActivatePassenger([FromRoute] int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerService.ActivatePassenger(id, cancellationToken);
+            var passenger = await _passengerService.ActivatePassenger(id);
             if (passenger.Success == true) return Ok(passenger);
 
             return BadRequest(passenger);
         }
 
-        [HttpDelete("DeactivatePassenger/{id}")]
-        public async Task<IActionResult> DeactivatePassenger([FromRoute] int id, CancellationToken cancellationToken)
+        [HttpPut("DeactivatePassenger/{id}")]
+        public async Task<IActionResult> DeactivatePassenger([FromRoute] int id)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var passenger = await _passengerService.DeactivatePassenger(id, cancellationToken);
+            var passenger = await _passengerService.DeactivatePassenger(id);
             if (passenger.Success == true) return Ok(passenger);
 
             return BadRequest(passenger);

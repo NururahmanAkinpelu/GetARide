@@ -10,10 +10,10 @@ namespace GetARide.Interface.IService
 {
     public interface IRoleService
     {
-        public Task<BaseResponse> CreateRole(RoleRequestModel model, CancellationToken cancellationToken);
-        public Task<BaseResponse> UpdateRole(RoleRequestModel model, int id,  CancellationToken cancellationToken);
-        public Task<RolesResponseModel> GetRolesByUserId(int userId, CancellationToken cancellationToken);
-        public Task<RolesResponseModel> GetAllRoles(CancellationToken cancellationToken);
+        public Task<BaseResponse> CreateRole(RoleRequestModel model );
+        public Task<BaseResponse> UpdateRole(RoleRequestModel model, int id );
+        public Task<RolesResponseModel> GetRolesByUserId(int userId );
+        public Task<RolesResponseModel> GetAllRoles( );
 
     }
 }

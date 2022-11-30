@@ -17,7 +17,7 @@ namespace GetARide.Context
                 .HasKey(ur => new { ur.UserId, ur.RoleId });
 
             modelBuilder.Entity<Payment>()
-            .HasOne<Booking>(b => b.Booking)
+            .HasOne<Order>(b => b.Order)
             .WithOne(ad => ad.Payment)
             .HasForeignKey<Payment>(ad => ad.BookingId);
 
@@ -26,12 +26,12 @@ namespace GetARide.Context
             .WithMany(v => v.Vehicles)
             .HasForeignKey(d => d.DriverId);
 
-            modelBuilder.Entity<Booking>()
+            modelBuilder.Entity<Order>()
                 .HasOne<Driver>(d => d.Driver)
             .WithMany(b => b.Bookings)
             .HasForeignKey(d => d.DriverId);
 
-            modelBuilder.Entity<Booking>()
+            modelBuilder.Entity<Order>()
                .HasOne<Passenger>(p => p.Passenger)
            .WithMany(b => b.Bookings)
            .HasForeignKey(d => d.PassengerId);
@@ -46,7 +46,7 @@ namespace GetARide.Context
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Trip> Trips { get; set; }
-        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Order> Bookings { get; set; }
 
     }
 }

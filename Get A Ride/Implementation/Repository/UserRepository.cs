@@ -18,22 +18,21 @@ namespace GetARide.Implementation.Repository
         {
             _context = context;
         }
-        public async Task<ICollection<User>> GetAllUsersAsync(CancellationToken cancellationToken)
+        public async Task<ICollection<User>> GetAllUsersAsync()
         {
-            cancellationToken.ThrowIfCancellationRequested();
+    
             var users = await _context.Users.Include(u => u.Id).ToListAsync();
             return users;
 
         }
 
-        public async Task<User> GetUserAsync(int id, CancellationToken cancellationToken)
+        public async Task<User> GetUserAsync(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             if (id == 0)
             {
                 throw new ArgumentNullException();
             }
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
                 return null;
@@ -41,31 +40,30 @@ namespace GetARide.Implementation.Repository
             return user;
         }
 
-        public async Task<User> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
+        public async Task<User> GetUserByEmailAsync(string email )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var user = await _context.Users.Include(x => x.UserRoles).ThenInclude(x =>x.Role).Where(x => x.Email == email).FirstOrDefaultAsync( cancellationToken);
-            if (user == null)
-            {
-                return null;
-            }
+            var user = await _context.Users.Include(x => x.UserRoles).ThenInclude(x =>x.Role).Where(x => x.Email == email).FirstOrDefaultAsync();
             return user;
         }
 
-        public async Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken)
+        public async Task<User> UpdateUserAsync(User user )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return user;
         }
 
-        public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken)
+        public async Task<User> CreateUserAsync(User user)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            await _context.Users.AddAsync(user, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
             return user;
         }
+
+        /*public async Task<User> DeactivateUser(User user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            throw new NotImplementedException();
+        }*/
     }
 }

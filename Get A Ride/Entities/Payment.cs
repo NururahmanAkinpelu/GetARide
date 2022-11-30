@@ -11,8 +11,8 @@ namespace GetARide.Entities
         public decimal Amount { get; set; }
         public Guid ReferenceNumber { get; set; }
         public bool Ispayed { get; set; }
-        public Booking Booking { get; set; }
-        public int Bookingid { get; set; }
+        public Order Order { get; set; }
+        public int OrderId { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
     }
 }

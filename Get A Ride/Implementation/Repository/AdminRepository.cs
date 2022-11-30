@@ -2,7 +2,6 @@
 using GetARide.Entities;
 using GetARide.Interface.IRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -18,25 +17,22 @@ namespace GetARide.Implementation.Repository
         {
             _context = context;
         }
-        public async Task<Admin> CreateAdmin(Admin admin, CancellationToken cancellationToken)
+        public async Task<Admin> CreateAdmin(Admin admin)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            await _context.Admins.AddAsync(admin, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.Admins.AddAsync(admin);
+            await _context.SaveChangesAsync();
             return admin;
         }
 
-        public async Task<Admin> UpdateAdmin(Admin admin, CancellationToken cancellationToken)
+        public async Task<Admin> UpdateAdmin(Admin admin)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             _context.Update(admin);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
             return admin;
         }
 
-        public async Task<Admin> GetAdminById(int id, CancellationToken cancellationToken)
+        public async Task<Admin> GetAdminById(int id )
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var admin = await _context.Admins.Include(x => x.User).Where(a => a.Id == id).SingleOrDefaultAsync();
             if (admin == null)
             {
@@ -45,10 +41,9 @@ namespace GetARide.Implementation.Repository
             return admin;
         }
 
-        public async Task<Admin> GetAdminByEmail(string email, CancellationToken cancellationToken)
+        public async Task<Admin> GetAdminByEmail(string email )
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var admin = await _context.Admins.Include(x => x.User).SingleOrDefaultAsync(a => a.Email == email, cancellationToken);
+            var admin = await _context.Admins.Include(x => x.User).SingleOrDefaultAsync(a => a.Email == email);
             if (admin == null)
             {
                 return null;
@@ -56,22 +51,19 @@ namespace GetARide.Implementation.Repository
             return admin;
         }
 
-        public async Task<IList<Admin>> GetAllActivatedAdmin(CancellationToken cancellationToken)
+        public async Task<IList<Admin>> GetAllActivatedAdmin()
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var admin = await _context.Admins.Include(x => x.User).Where(x => x.IsDeleted == false).ToListAsync();
             return admin;
         }
-        public async Task<IList<Admin>> GetAllDeactivatedAdmin(CancellationToken cancellationToken)
+        public async Task<IList<Admin>> GetAllDeactivatedAdmin()
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var admin = await _context.Admins.Include(x => x.User ).Where(x => x.IsDeleted == true).ToListAsync();
             return admin;
         }
 
-        public async Task<ICollection<Admin>> GetAllAdmins(CancellationToken cancellationToken)
+        public async Task<ICollection<Admin>> GetAllAdmins()
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var admins = await _context.Admins.Include(a => a.User).ToListAsync();
             return admins;
         }
