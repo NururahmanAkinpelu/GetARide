@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>🌏 Google Maps Geolocation Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/css/linearicons.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/magnific-popup.css">
+    <link rel="stylesheet" href="/css/nice-select.css">							
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/jquery-ui.css">			
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div id="floating-panel">
+      <div style="width: 300px;" class="col-lg-4  col-md-6 header-right">
+        <form id="form" >
+          <input  type="text" id="start" name="PickUpLocation" placeholder="PickUpLocation"  onfocus="this.placeholder = ''" onblur="this.placeholder = 'PickUpLocation'">
+  
+          <input  type="text" id="dropLocation" name="DropLocation" placeholder="Destination"  onfocus="this.placeholder = ''" onblur="this.placeholder = 'DropLocation'">
+        </form>
+      </div>
+    </div>
+    <main class="container">
+      <div id="map" class="map">
+      </div>
+
+      <p id="info" class="info"></p>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="search.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmv4xt1oLzht8_wbfW-RiMaHLO0RpyYYE&callback=init&libraries=places&v=weekly"></script>
+  </body>
+</html>

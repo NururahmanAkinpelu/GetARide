@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- <style>
+        * {
+          box-sizing: border-box;
+        }
+        .openBtn {
+          display: flex;
+          justify-content: left;
+        }
+        .openButton {
+          border: none;
+          border-radius: 5px;
+          background-color: #1c87c9;
+          color: white;
+          padding: 14px 20px;
+          cursor: pointer;
+          position: fixed;
+        }
+        .loginPopup {
+          position: relative;
+          text-align: center;
+          width: 100%;
+        }
+        .formPopup {
+          display: none;
+          position: fixed;
+          left: 45%;
+          top: 5%;
+          transform: translate(-50%, 5%);
+          border: 3px solid #999999;
+          z-index: 9;
+        }
+        .formContainer {
+          max-width: 300px;
+          padding: 20px;
+          background-color: #f9d700;
+        }
+        .formContainer input[type=text],
+        .formContainer input[type=password] {
+          width: 100%;
+          padding: 15px;
+          margin: 5px 0 20px 0;
+          border: none;
+          background: rgb(10, 10, 10);
+        }
+        .formContainer input[type=text]:focus,
+        .formContainer input[type=password]:focus {
+          background-color: #ddd;
+          outline: none;
+        }
+        .formContainer .btn {
+          padding: 12px 20px;
+          border: none;
+          background-color: black;
+          color: #fff;
+          cursor: pointer;
+          width: 100%;
+          margin-bottom: 15px;
+          
+        }
+        .formContainer .cancel {
+          background-color: black;
+        }
+        .formContainer .btn:hover,
+        .openButton:hover {
+          opacity: 1;
+        }
+      </style> -->
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <!-- SEO Meta Tags -->
+        <meta name="description" content="Your description">
+        <meta name="author" content="Your name">
+
+        <!-- OG Meta Tags to improve the way the post looks when you share the page on Facebook, Twitter, LinkedIn -->
+        <meta property="og:site_name" content="" /> <!-- website name -->
+        <meta property="og:site" content="" /> <!-- website link -->
+        <meta property="og:title" content=""/> <!-- title shown in the actual shared post -->
+        <meta property="og:description" content="" /> <!-- description shown in the actual shared post -->
+        <meta property="og:image" content="" /> <!-- image link, make sure it's jpg -->
+        <meta property="og:url" content="" /> <!-- where do you want your post to link to -->
+        <meta name="twitter:card" content="summary_large_image"> <!-- to have large image post format in Twitter -->
+
+        <!-- Webpage Title -->
+        <title>Vehicle Registration</title>
+        
+        <!-- Styles -->
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/fontawesome-all.min.css" rel="stylesheet">
+        <link href="css/swiper.css" rel="stylesheet">
+        <link href="css/styles.css" rel="stylesheet">
+        
+        
+    </head>
+    <body>
+        
+        <!-- Navigation -->
+        <nav id="navbarExample" class="navbar navbar-expand-lg fixed-top navbar-light" aria-label="Main navigation">
+            <div class="container">
+
+                
+
+                <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+                    <h3 style="color: rgb(7, 4, 4);" >GetARide</h3>
+                    <ul class="navbar-nav ms-auto navbar-nav-scroll">
+                        <li class="nav-item">
+                            <a class="nav-link active" style="color:black;" aria-current="page" href="/index.html">Home</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" style="color:black ;" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Drop</a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdown01">
+                                <li><a class="dropdown-item" style="color:black;" href="#">Article Details</a></li>
+                                <li><div class="dropdown-divider"></div></li>
+                                <li><a class="dropdown-item" style="color:black;" href="#">Terms Conditions</a></li>
+                                <li><div class="dropdown-divider"></div></li>
+                                <li><a class="dropdown-item" style="color:black;" href="#">Privacy Policy</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <!-- <span class="nav-item">
+                        <a class="btn-outline-sm" style="color:#f9dd12;background-color: black;" href="log-in.html">log-in</a>
+                    </span> -->
+                </div> <!-- end of navbar-collapse -->
+            </div> <!-- end of container -->
+        </nav> <!-- end of navbar -->
+        <!-- end of navigation -->
+
+
+        <!-- Header -->
+        <header class="ex-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-10 offset-xl-1">
+                        <h1 class="text-center" style="color: black;">Vehicle Registration</h1>
+                    </div> <!-- end of col -->
+                </div> <!-- end of row -->
+            </div> <!-- end of container -->
+        </header> <!-- end of ex-header -->
+        <!-- end of header -->
+        
+        
+        <!-- Basic -->
+        <div class="ex-form-1 pt-5 pb-5">
+            <div  class="container">
+                <div class="row">
+                    <div class="col-xl-6 offset-xl-3">
+                        <div class="text-box mt-5 mb-5">
+                            <p class="mb-4">Fill out the form below to sign up for the service. </p>
+
+                            <!-- Sign Up Form -->
+                            <form style="color: black;" id="myform2" enctype="multipart/form-data">
+
+                                <div class="mb-4 form-floating">
+                                    <input type="text" class="form-control" id="Name" name="name" placeholder="Name" required>
+                                    <label for="floatingInput">Name</label>
+                                </div>
+
+                                <div class="mb-4 form-floating">
+                                    <input type="text" class="form-control" id="Model" name="mode" placeholder="Model" required>
+                                    <label for="floatingInput">Model</label>
+                                </div>
+
+                                <div class="mb-4 form-floating">
+                                    <input type="text" class="form-control" id="Colour" name="colour" placeholder="Colour" required>
+                                    <label for="floatingInput">Colour</label>
+                                </div>
+
+                                <div class="mb-4 form-floating">
+                                    <input type="text" class="form-control" id="PlateNumber" name="plateNumber" placeholder="PlateNumber" required>
+                                    <label for="floatingPassword">PlateNumber</label>
+                                </div>
+
+                                <div class="mb-4 form-floating">
+                                    <input type="file" class="form-control" id="Document" name="document" placeholder="Document" required>
+                                    <label for="floatingPassword">Document</label>
+                                </div>
+
+                                <div class="mb-4 form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                    <label class="form-check-label" for="exampleCheck1">I agree with the site's stated <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms & Conditions</a></label>
+                                </div>
+
+                                <button id="submit2" /*onclick="RegisterVehicle()"*/ type="submit"  class="form-control-submit-button">Submit</button>
+                            </form>
+                            <!-- end of sign up form -->
+
+
+                            <!-- <div class="openBtn">
+								Do you have an account with us ?
+								<button style="background-color: black;" onclick="openForm()" class="openButton" >Log In</button>
+							  </div>
+							  <div class="loginPopup">
+								<div class="formPopup" id="popupForm">
+								  <form id="myformvalue" class="formContainer">
+									<h2>Please Log in</h2>
+									<label for="email">
+								
+									</label>
+									<input type="text" id="email1" placeholder="Email" name="email" required>
+									<label for="psw">
+									 
+									</label>
+									<input type="password" id="psw" placeholder="Password" name="psw" required>
+									<button type="submit"  class="btn">Log in</button>
+									<button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+								  </form>
+								</div>
+							  </div> -->
+
+                        </div> <!-- end of text-box -->
+                    </div> <!-- end of col -->
+                </div> <!-- end of row -->
+            </div> <!-- end of container -->
+        </div> <!-- end of ex-basic-1 -->
+        <!-- end of basic -->
+
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="footer-col first">
+                            <h6>About Website</h6>
+                            <p class="p-small">Proin ut felis purus vestibulum in orci molestie, efficitur lacus ac pellentesque elit. Fusce mollis laoreet lobortis nulla ac efficitur lacus ac </p>
+                        </div> <!-- end of footer-col -->
+                        <div class="footer-col second">
+                            <h6>Links</h6>
+                            <ul class="list-unstyled li-space-lg p-small">
+                                <li>Important: <a href="terms.html">Terms & Conditions</a>, <a href="privacy.html">Privacy Policy</a></li>
+                                <li>Useful: <a href="#">Colorpicker</a>, <a href="#">Icon Library</a>, <a href="#">Illustrations</a></li>
+                                <li>Menu: <a href="#header">Home</a>, <a href="#features">Features</a>, <a href="#details">Details</a>, <a href="#pricing">Pricing</a></li>
+                            </ul>
+                        </div> <!-- end of footer-col -->
+                        <div class="footer-col third">
+                            <span class="fa-stack">
+                                <a href="#your-link">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-facebook-f fa-stack-1x"></i>
+                                </a>
+                            </span>
+                            <span class="fa-stack">
+                                <a href="#your-link">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-twitter fa-stack-1x"></i>
+                                </a>
+                            </span>
+                            <span class="fa-stack">
+                                <a href="#your-link">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-pinterest-p fa-stack-1x"></i>
+                                </a>
+                            </span>
+                            <span class="fa-stack">
+                                <a href="#your-link">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-instagram fa-stack-1x"></i>
+                                </a>
+                            </span>
+                            <p class="p-small">Quam posuerei pellent esque vam <a href="mailto:contact@site.com"><strong>contact@site.com</strong></a></p>
+                        </div> <!-- end of footer-col -->
+                    </div> <!-- end of col -->
+                </div> <!-- end of row -->
+            </div> <!-- end of container -->
+        </div> <!-- end of footer -->  
+        <!-- end of footer -->
+
+
+        <!-- Copyright -->
+        <div class="copyright">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <p class="p-small">Copyright © <a href="#your-link">Your name</a></p>
+                    </div> <!-- end of col -->
+                    <div class="col-lg-6">
+                        <p class="p-small">Distributed By<a href="https://themewagon.com/" target="_blank"> Themewagon</a></p>
+                    </div> <!-- end of col -->
+                </div> <!-- enf of row -->
+            </div> <!-- end of container -->
+        </div> <!-- end of copyright --> 
+        <!-- end of copyright -->
+        
+
+        <!-- Back To Top Button -->
+        <button onclick="topFunction()" id="myBtn">
+            <img src="images/up-arrow.png" alt="alternative">
+        </button>
+        <!-- end of back to top button -->
+            
+        <!-- Scripts -->
+        <script src="/Driver/vehiclesignup.js"></script>
+        <script src="js/bootstrap.min.js"></script> <!-- Bootstrap framework -->
+        <script src="js/swiper.min.js"></script> <!-- Swiper for image and text sliders -->
+        <script src="js/purecounter.min.js"></script> <!-- Purecounter counter for statistics numbers -->
+        <script src="js/replaceme.min.js"></script> <!-- ReplaceMe for rotating text -->
+        <script src="js/scripts.js"></script> <!-- Custom scripts -->
+    </body>
+</html>
