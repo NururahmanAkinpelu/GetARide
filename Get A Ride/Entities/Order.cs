@@ -23,5 +23,9 @@ namespace GetARide.Entities
         public Passenger Passenger { get; set; }
         public Trip Trip { get; set; }
         public int TripId { get; set; }
+        public decimal? Price { get; set; }
+/*        public int? Distance { get; set; }
+        public int? Time { get; set; }*/
+
     }
 }

@@ -30,7 +30,7 @@ namespace GetARide.Controllers
         [HttpPost("RegisterDriver")]
         public async Task<IActionResult> RegisterDriver([FromForm] DriverRequestModel model)
         {
-           /* var files = HttpContext.Request.Form;
+            var files = HttpContext.Request.Form;
             int i = 0;
 
             if (files != null && files.Count > 0)
@@ -50,7 +50,7 @@ namespace GetARide.Controllers
                     else model.Licence = image;
                     i++;
                 }
-            }*/
+            }
             var driver = await _driverService.RegisterDriver(model);
             if (driver.Success == true) return Ok(driver);
 

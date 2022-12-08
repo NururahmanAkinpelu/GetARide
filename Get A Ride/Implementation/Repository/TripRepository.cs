@@ -27,7 +27,7 @@ namespace GetARide.Implementation.Repository
 
         public async Task<Trip> GetTrip(int id )
         {
-            var trip = await _context.Trips.SingleOrDefaultAsync(t => t.Id == id);
+            var trip = await _context.Trips.Include(t => t.Order).SingleOrDefaultAsync(t => t.Id == id);
             if (id == 0)
             {
                 throw new ArgumentNullException();

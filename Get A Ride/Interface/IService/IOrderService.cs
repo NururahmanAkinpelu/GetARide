@@ -10,24 +10,25 @@ namespace GetARide.Interface.IService
 {
     public interface IOrderService
     {
-        public Task<BookingResponseModel> MakeOrder(int tripId, int userId );
-        public Task<BookingResponseModel> MakeReservation(int tripId, int userId);
+        public Task<OrderResponseModel> MakeOrder(int tripId, int userId );
+        public Task<OrderResponseModel> MakeReservation(int tripId, int userId);
         public Task<BaseResponse> CancelOrder(int id);
         public Task<BaseResponse> AcceptOrder(int driverId, int id );
-        public Task<BookingResponseModel> GetOrderByReferenceNumber(string referenceNumber );
-        public Task<BookingsResponseModel> GetOrdersByDriverEmail(string email );
-        public Task<BookingsResponseModel> GetOrdersByPassengerEmail(string email );
-        public Task<BookingsResponseModel> GetOrdersByDate(DateTime dateTime );
-        public Task<BookingsResponseModel> GetBookingByStatus(OrderStatus status );
-        public Task<BookingsResponseModel> GetAllDriverOrders(int id );
-        public Task<BookingsResponseModel> GetAllPassengerOrders(int id );
-        public Task<BookingsResponseModel> GetAllAcceptedOrders( );
-        //public Task<BookingsResponseModel> GetAllRejectedBookings(CancellationToken cancellationToken);
-        public Task<BookingsResponseModel> GetAllCancelledOrders( );
-        public Task<BookingsResponseModel> GetAcceptedOrdersByDate(DateTime dateTime );
-        //public Task<BookingsResponseModel> GetRejectedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken);
-        public Task<BookingsResponseModel> GetCancelledOrdersByDate(DateTime dateTime);
-        public Task<BookingsResponseModel> GetAllCreatedOrderByLocation(string location );
+        public Task<OrderResponseModel> GetOrderByReferenceNumber(string referenceNumber );
+        public Task<OrdersResponseModel> GetOrdersByDriverEmail(string email );
+        public Task<OrdersResponseModel> GetOrdersByPassengerEmail(string email );
+        public Task<OrdersResponseModel> GetOrdersByDate(DateTime dateTime );
+        public Task<OrdersResponseModel> GetBookingByStatus(OrderStatus status );
+        public Task<OrdersResponseModel> GetAllDriverOrders(int id );
+        public Task<OrdersResponseModel> GetAllPassengerOrders(int id );
+        public Task<OrdersResponseModel> GetAllAcceptedOrders( );
+        //public Task<OrdersResponseModel> GetAllRejectedBookings(CancellationToken cancellationToken);
+        public Task<OrdersResponseModel> GetAllCancelledOrders( );
+        public Task<OrdersResponseModel> GetAcceptedOrdersByDate(DateTime dateTime );
+        //public Task<OrdersResponseModel> GetRejectedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken);
+        public Task<OrdersResponseModel> GetCancelledOrdersByDate(DateTime dateTime);
+        public Task<OrdersResponseModel> GetAllCreatedOrderByLocation(string location );
         public Task<int> GetAllCreatedOrdersByLocationCount(string location);
+        public Task<OrderResponseModel> CalculateOrderPrice(int orderId);
     }
 }

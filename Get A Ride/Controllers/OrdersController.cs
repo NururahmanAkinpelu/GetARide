@@ -168,5 +168,14 @@ namespace GetARide.Controllers
             var booking = await _orderService.GetAllCreatedOrdersByLocationCount(location);
             return Ok(booking);
         }
+
+        [HttpPost("CalculateOrderPrice/{orderId}")]
+        public async Task<IActionResult> CalculateOrderPrice(int orderId)
+        {
+            var price = await _orderService.CalculateOrderPrice(orderId);
+            if (price.Success == true) return Ok(price);
+
+            return BadRequest(price);
+        }
     }
 }

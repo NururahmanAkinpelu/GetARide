@@ -24,21 +24,12 @@ namespace GetARide.DTO
         public string EndLocation { get; set; }
         public string Type { get; set; }
         public int TripId { get; set; }
+        public decimal? Price { get; set; }
        
 
     }
 
-    public class BookingRequestModel
-    {
-        public string ReferenceNumber { get; set; }
-        public OrderStatus Status { get; set; }
-        public DateTime? Date { get; set; }
-        public int BookingType { get; set; }
-        public int PassengerId { get; set; }
-        public int TripId { get; set; }
-    }
-
-    public class UpdateBookingRequestModel
+    public class UpdateOrderRequestModel
     {
         public OrderStatus Status { get; set; }
         public int? DriverId { get; set; }
@@ -46,13 +37,12 @@ namespace GetARide.DTO
         public int PaymentId { get; set; }
     }
 
-    public class BookingResponseModel:BaseResponse
+    public class OrderResponseModel:BaseResponse
     {
         public OrderDTO OrderDto { get; set; }
-
     }
 
-    public class BookingsResponseModel:BaseResponse
+    public class OrdersResponseModel:BaseResponse
     {
         public ICollection<OrderDTO> OrderDto { get; set; }
     }

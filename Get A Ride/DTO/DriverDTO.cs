@@ -1,8 +1,6 @@
-﻿using GetARide.Entities.Identity;
-using System;
+﻿using GetARide.Entities;
+using GetARide.Entities.Identity;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GetARide.DTO
 {
@@ -49,4 +47,8 @@ namespace GetARide.DTO
     {
         public ICollection<DriverDTO> Data { get; set; }
     }
+
+
+
+
 }

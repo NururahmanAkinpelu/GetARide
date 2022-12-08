@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GetARide.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20221129234101_migration2")]
-    partial class migration2
+    [Migration("20221203223843_migration6")]
+    partial class migration6
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -352,6 +352,9 @@ namespace GetARide.Migrations
                     b.Property<int>("PassengerId")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<string>("ReferenceNumber")
                         .HasColumnType("text");
 
@@ -495,6 +498,9 @@ namespace GetARide.Migrations
                     b.Property<DateTime>("DeletedOn")
                         .HasColumnType("datetime");
 
+                    b.Property<int?>("Distance")
+                        .HasColumnType("int");
+
                     b.Property<string>("DropLocation")
                         .HasColumnType("text");
 
@@ -517,6 +523,9 @@ namespace GetARide.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Time")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")
@@ -582,11 +591,11 @@ namespace GetARide.Migrations
             modelBuilder.Entity("GetARide.Entities.Order", b =>
                 {
                     b.HasOne("GetARide.Entities.Driver", "Driver")
-                        .WithMany("Bookings")
+                        .WithMany("Orders")
                         .HasForeignKey("DriverId");
 
                     b.HasOne("GetARide.Entities.Passenger", "Passenger")
-                        .WithMany("Bookings")
+                        .WithMany("Orders")
                         .HasForeignKey("PassengerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -628,7 +637,7 @@ namespace GetARide.Migrations
 
             modelBuilder.Entity("GetARide.Entities.Driver", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("Orders");
 
                     b.Navigation("Vehicles");
                 });
@@ -656,7 +665,7 @@ namespace GetARide.Migrations
 
             modelBuilder.Entity("GetARide.Entities.Passenger", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("GetARide.Entities.Trip", b =>

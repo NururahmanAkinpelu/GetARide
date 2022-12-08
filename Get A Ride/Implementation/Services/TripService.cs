@@ -13,11 +13,13 @@ namespace GetARide.Implementation.Services
     public class TripService : ITripService
     {
         private readonly ITripRepository _tripRepository;
-        public TripService(ITripRepository tripRepository)
+        private readonly IDriverRepository _driverRepository;
+        public TripService(ITripRepository tripRepository, IDriverRepository driverRepository)
         {
+            _driverRepository = driverRepository;
             _tripRepository = tripRepository;
         }
-        public async Task<BaseResponse> EndTrip( int id )
+        public async Task<BaseResponse> EndTrip(UpdateTripRequestModel model, int id)
         {
             var trip = await _tripRepository.GetTrip(id);
             if (trip == null)
@@ -37,9 +39,10 @@ namespace GetARide.Implementation.Services
                     Success = false
                 };
             }
+            trip.Distance = model.Distance;
+            trip.Time = model.Time;
             trip.EndTime = DateTime.UtcNow;
             trip.Status = TripStatus.Ended;
-            trip.Order.Driver.IsAvailable = true;
             await _tripRepository.Updatetrip(trip);
             return new BaseResponse
             {

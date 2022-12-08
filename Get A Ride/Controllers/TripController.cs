@@ -48,9 +48,9 @@ namespace GetARide.Controllers
         }
 
         [HttpPut("EndTrip/{id}")]
-        public async Task<IActionResult> EndTrip([FromRoute]int id)
+        public async Task<IActionResult> EndTrip([FromBody]UpdateTripRequestModel model, [FromRoute]int id)
         {
-            var trip = await _tripService.EndTrip(id);
+            var trip = await _tripService.EndTrip(model, id);
             if (trip.Success == true) return Ok(trip);
 
             return BadRequest(trip);

@@ -294,7 +294,7 @@ namespace GetARide.Migrations
                     b.Property<DateTime>("LastModifiedOn")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("Model")
+                    b.Property<string>("Mode")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")

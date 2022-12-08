@@ -15,6 +15,8 @@ namespace GetARide.Entities
         public DateTime? Date { get; set; }
         public TripType Type { get; set; }
         public TripStatus Status { get; set; }
+        public int? Distance { get; set; }
+        public int? Time { get; set; }
         public Order Order { get; set; }
     }
 }

@@ -24,17 +24,9 @@ namespace GetARide.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpPost("RegisterVehicle")]
-        public async Task<IActionResult> RegisterVehicle([FromBody]VehicleRequestModel model)
-        {
-            var vehicle = await _vehicleService.RegisterVehicle(model, model.DriverId);
-            if (vehicle.Success == true) return Ok(vehicle);
 
-            return BadRequest(vehicle);
-        }
-
-        [HttpPut("UpdateVehicle/{id}")]
-        public async Task<IActionResult> UpdateVehicle([FromForm] UpdateVehicleRequestModel model, [FromRoute] int id )
+        [HttpPost("RegisterVehicle/{driverId}")]
+        public async Task<IActionResult> RegisterVehicle([FromForm] VehicleRequestModel model, int driverId)
         {
             var files = HttpContext.Request.Form;
 
@@ -51,7 +43,34 @@ namespace GetARide.Controllers
                     {
                         file.CopyTo(filestream);
                     }
-                    model.Documents = (documents);
+                    model.Document = documents;
+                }
+            }
+            var vehicle = await _vehicleService.RegisterVehicle(model, driverId);
+            if (vehicle.Success == true) return Ok(vehicle);
+
+            return BadRequest(vehicle);
+        }
+
+        [HttpPut("UpdateVehicle/{id}")]
+        public async Task<IActionResult> UpdateVehicle([FromForm] UpdateVehicleRequestModel model, [FromRoute] int id)
+        {
+            var files = HttpContext.Request.Form;
+
+            if (files != null && files.Count > 0)
+            {
+                string imageDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "Documents");
+                Directory.CreateDirectory(imageDirectory);
+                foreach (var file in files.Files)
+                {
+                    FileInfo info = new FileInfo(file.FileName);
+                    string documents = Guid.NewGuid().ToString() + info.Extension;
+                    string path = Path.Combine(imageDirectory, documents);
+                    using (var filestream = new FileStream(path, FileMode.Create))
+                    {
+                        file.CopyTo(filestream);
+                    }
+                    model.Document = (documents);
                 }
             }
 
@@ -62,7 +81,7 @@ namespace GetARide.Controllers
         }
 
         [HttpDelete("Deletevehicle/{id}")]
-        public async Task<IActionResult> DeleteVehicle([FromRoute] int id )
+        public async Task<IActionResult> DeleteVehicle([FromRoute] int id)
         {
             var vehicle = await _vehicleService.DeleteVehicle(id);
             if (vehicle.Success == true) return Ok(vehicle);
@@ -71,7 +90,7 @@ namespace GetARide.Controllers
         }
 
         [HttpGet("GetAllDriversVehicle/{driverId}")]
-        public async Task<IActionResult> GetAllDriversVehicle([FromRoute] int driverId )
+        public async Task<IActionResult> GetAllDriversVehicle([FromRoute] int driverId)
         {
             var vehicle = await _vehicleService.GetAllDriversVehicle(driverId);
             if (vehicle.Success == true) return Ok(vehicle);

@@ -26,6 +26,7 @@ namespace GetARide.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+
         [HttpPost("RegisterAdmin")]
         public async Task<IActionResult> RegisterAdmin([FromForm] AdminRequestModel model)
         {

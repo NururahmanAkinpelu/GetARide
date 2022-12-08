@@ -46,7 +46,7 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BaseResponse> RegisterVehicle(VehicleRequestModel model, int driverId = 27)
+        public async Task<BaseResponse> RegisterVehicle(VehicleRequestModel model, int driverId)
         {
 
             var getVehicle = await _vehicleRepository.GetVehicleByPlateNumber(model.PlateNumber);
@@ -62,32 +62,13 @@ namespace GetARide.Implementation.Services
             var vehicle = new Vehicle
             {
                 Name = model.Name,
-                Model = model.Model,
+                Model = model.Mode,
                 Colour = model.Colour,
                 PlateNumber = model.PlateNumber,
                 Type = model.Type,
+                Documents = model.Document,
                 DriverId = driverId
             };
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory() + "//Document//");
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-            if (model.Documents != null)
-            {
-
-                var fileName = Path.GetFileNameWithoutExtension(model.Documents.FileName);
-                var filePath = Path.Combine(folderPath, model.Documents.FileName);
-                var extension = Path.GetExtension(model.Documents.FileName);
-                if (!Directory.Exists(filePath))
-                {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await model.Documents.CopyToAsync(stream);
-                    }
-                    vehicle.Documents = fileName;
-                }
-            }
             var addVehicle = await _vehicleRepository.RegisterVehicle(vehicle);
             vehicle.CreatedBy = addVehicle.DriverId;
             vehicle.LastModifiedBy = addVehicle.DriverId;
@@ -142,10 +123,10 @@ namespace GetARide.Implementation.Services
                 };
             }
             vehicle.Name = model.Name;
-            vehicle.Model = model.Model;
+            vehicle.Model = model.Mode;
             vehicle.Colour = model.Colour;
             vehicle.PlateNumber = model.PlateNumber;
-            vehicle.Documents = model.Documents;
+            vehicle.Documents = model.Document;
 
             await _vehicleRepository.UpdateVehicle(vehicle);
             return new BaseResponse
@@ -155,10 +136,9 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<VehiclesResponseModel> GetAllDriversVehicle(int userId)
+        public async Task<VehiclesResponseModel> GetAllDriversVehicle(int driverId)
         {
-            var driver = await _userRepository.GetUserAsync(userId);
-            var vehicles = await _vehicleRepository.GetAllDriversVehicles(driver.Id);
+            var vehicles = await _vehicleRepository.GetAllDriversVehicles(driverId);
             if (vehicles.Count == 0)
             {
                 return new VehiclesResponseModel
@@ -171,14 +151,14 @@ namespace GetARide.Implementation.Services
             {
                 Message = "List of vehicles",
                 Success = true,
-                Data = vehicles.Select(v => new VehicleDTO
+                VehicleDtos = vehicles.Select(v => new VehicleDTO
                 {
                     Id = v.Id,
                     Name = v.Name,
-                    Model = v.Model,
+                    Mode = v.Model,
                     Colour = v.Colour,
                     PlateNumber = v.PlateNumber,
-                    Documents = v.Documents,
+                    Document = v.Documents,
                     Type = v.Type
 
                 }).ToList()
@@ -197,4 +177,6 @@ namespace GetARide.Implementation.Services
             return count;
         }
     }
+
+
 }

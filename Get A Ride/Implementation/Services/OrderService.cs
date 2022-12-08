@@ -69,12 +69,12 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingResponseModel> MakeOrder(int tripId, int passengerId)
+        public async Task<OrderResponseModel> MakeOrder(int tripId, int passengerId)
         {
             var order = await _orderRepository.GetOrderByTripId(tripId);
             if (order!= null)
             {
-                return new BookingResponseModel
+                return new OrderResponseModel
                 {
                     Message = "You order has been sent, a driver will soon accept your requst",
                     Success = false
@@ -97,6 +97,7 @@ namespace GetARide.Implementation.Services
                 TripId = trip.Id,
                 Type = OrderType.Immediate          
             };
+            newBooking.Passenger = passenger;
             newBooking.IsReady = true;
             var booking = await _orderRepository.CreateBooking(newBooking);
 
@@ -110,7 +111,7 @@ namespace GetARide.Implementation.Services
                 Type = newBooking.Trip.Type.ToString()
             };
             
-            return new BookingResponseModel
+            return new OrderResponseModel
             {
                 Message = "Succesfully sent",
                 Success = true,
@@ -118,12 +119,12 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingResponseModel> MakeReservation(int tripId, int userId)
+        public async Task<OrderResponseModel> MakeReservation(int tripId, int userId)
         {
             var order = await _orderRepository.GetOrderByTripId(tripId);
             if (order != null)
             {
-                return new BookingResponseModel
+                return new OrderResponseModel
                 {
                     Message = "You order has been sent, a driver will soon accept your requst",
                     Success = false
@@ -159,7 +160,7 @@ namespace GetARide.Implementation.Services
                 OrderType = booking.Type.ToString()
             };
 
-            return new BookingResponseModel
+            return new OrderResponseModel
             {
                 Message = "Succesfully sent",
                 Success = true,
@@ -168,19 +169,19 @@ namespace GetARide.Implementation.Services
             };
         }  
 
-        public async Task<BookingsResponseModel> GetAllAcceptedOrders( )
+        public async Task<OrdersResponseModel> GetAllAcceptedOrders( )
         {
             var bookings = await _orderRepository.GetAllAcceptedBookings();
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "No bookings accepted",
                     Success = false
                 };
             }
 
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = "List of accepted bookings",
                 Success = true,
@@ -196,19 +197,19 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingsResponseModel> GetAllCancelledOrders( )
+        public async Task<OrdersResponseModel> GetAllCancelledOrders( )
         {
             var bookings = await _orderRepository.GetAllCancelledBookings();
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "No booking is cancelled",
                     Success = false
                 };
             }
 
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = "List of cancelled bookings",
                 Success = true,
@@ -224,18 +225,18 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingsResponseModel> GetAllDriverOrders(int id )
+        public async Task<OrdersResponseModel> GetAllDriverOrders(int id )
         {
             var bookings = await _orderRepository.GetAllDriverBookings(id);
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "This driver has no booking",
                     Success = false
                 };
             }
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = "List of Driver's bookings",
                 Success = true,
@@ -250,12 +251,12 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingsResponseModel> GetAllPassengerOrders(int id )
+        public async Task<OrdersResponseModel> GetAllPassengerOrders(int id )
         {
             var bookings = await _orderRepository.GetAllPassengerBookings(id);
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "This Passenger did not make any booking",
                     Success = false
@@ -269,7 +270,7 @@ namespace GetARide.Implementation.Services
                 TripId = b.Trip.Id,
                 Type = b.Trip.Type.ToString()
             }).ToList();
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = "List of Passenger's bookings",
                 Success = true,
@@ -277,20 +278,20 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        /*public async Task<BookingsResponseModel> GetAllRejectedBookings(CancellationToken cancellationToken)
+        /*public async Task<OrdersResponseModel> GetAllRejectedBookings(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var bookings = await _orderRepository.GetAllRejectedBookings(cancellationToken);
             if (bookings == null)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "No booking is rejected",
                     Success = false
                 };
             }
 
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = "List of rejected bookings",
                 Success = true,
@@ -305,18 +306,18 @@ namespace GetARide.Implementation.Services
             };
         }*/
        
-        public async Task<BookingsResponseModel> GetOrdersByDriverEmail(string email )
+        public async Task<OrdersResponseModel> GetOrdersByDriverEmail(string email )
         {
             var bookings = await _orderRepository.GetBookingsByDriverEmail(email);
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "This driver has no booking",
                     Success = false
                 };
             }
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = "List of Driver's bookings",
                 Success = true,
@@ -332,18 +333,18 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingResponseModel> GetOrderByReferenceNumber(string refernceNumber)
+        public async Task<OrderResponseModel> GetOrderByReferenceNumber(string refernceNumber)
         {
             var booking = await _orderRepository.GetBookingByReferenceNumber(refernceNumber);
             if (booking == null)
             {
-                return new BookingResponseModel
+                return new OrderResponseModel
                 {
                     Message = "Order deos not exists",
                     Success = false
                 };
             }
-            return new BookingResponseModel
+            return new OrderResponseModel
             {
                 OrderDto = new OrderDTO
                 {
@@ -359,18 +360,18 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingsResponseModel> GetOrdersByPassengerEmail(string email)
+        public async Task<OrdersResponseModel> GetOrdersByPassengerEmail(string email)
         {
             var bookings = await _orderRepository.GetBookingsByPassengerEmail(email);
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "This Passenger did not make any booking",
                     Success = false
                 };
             }
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = "List of Passenger's bookings",
                 Success = true,
@@ -386,19 +387,19 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingsResponseModel> GetOrdersByDate(DateTime dateTime)
+        public async Task<OrdersResponseModel> GetOrdersByDate(DateTime dateTime)
         {
             var bookings = await _orderRepository.GetBookingsByDate(dateTime);
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "No booking on this date",
                     Success = false
                 };
             }
 
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = $"List of bookings on{dateTime}",
                 Success = true,
@@ -444,19 +445,19 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        public async Task<BookingsResponseModel> GetAcceptedOrdersByDate(DateTime dateTime )
+        public async Task<OrdersResponseModel> GetAcceptedOrdersByDate(DateTime dateTime )
         {
             var bookings = await _orderRepository.GetAcceptedBookingsByDate(dateTime);
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "No accepted booking on this date",
                     Success = false
                 };
             }
 
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = $"List of bookings on{dateTime}",
                 Success = true,
@@ -473,20 +474,20 @@ namespace GetARide.Implementation.Services
             };
         }
 
-       /* public async Task<BookingsResponseModel> GetRejectedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
+       /* public async Task<OrdersResponseModel> GetRejectedBookingsByDate(DateTime dateTime, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var bookings = await _orderRepository.GetRejectedBookingsByDate(dateTime, cancellationToken);
             if (bookings == null)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "No rejected booking on this date",
                     Success = false
                 };
             }
 
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = $"List of bookings on{dateTime}",
                 Success = true,
@@ -502,19 +503,19 @@ namespace GetARide.Implementation.Services
             };
         }*/
 
-        public async Task<BookingsResponseModel> GetCancelledOrdersByDate(DateTime dateTime )
+        public async Task<OrdersResponseModel> GetCancelledOrdersByDate(DateTime dateTime )
         {
             var bookings = await _orderRepository.GetCancelledBookingsByDate(dateTime);
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "No cancelled booking on this date",
                     Success = false
                 };
             }
 
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = $"List of bookings on{dateTime}",
                 Success = true,
@@ -528,24 +529,24 @@ namespace GetARide.Implementation.Services
             };
         }
 
-        Task<BookingsResponseModel> IOrderService.GetBookingByStatus(OrderStatus status )
+        Task<OrdersResponseModel> IOrderService.GetBookingByStatus(OrderStatus status )
         {
             throw new NotImplementedException();
         }
 
-        public async Task<BookingsResponseModel> GetAllCreatedOrderByLocation(string driversLocation )
+        public async Task<OrdersResponseModel> GetAllCreatedOrderByLocation(string driversLocation )
         {
             var bookings = await _orderRepository.GetAllCreatedBookingsByLocation(driversLocation);
             if (bookings.Count == 0)
             {
-                return new BookingsResponseModel
+                return new OrdersResponseModel
                 {
                     Message = "No bookings",
                     Success = false
                 };
             }
 
-            return new BookingsResponseModel
+            return new OrdersResponseModel
             {
                 Message = "List of Bookings",
                 Success = true,
@@ -573,5 +574,25 @@ namespace GetARide.Implementation.Services
             return count;
         }
 
-    }
+        public async Task<OrderResponseModel> CalculateOrderPrice(int orderId)
+        {
+            var order = await _orderRepository.GetBooking(orderId);
+            var trip = await _tripRepository.GetTrip(order.TripId);
+            if (trip.Status == TripStatus.Ended)
+            {
+                order.Price = (trip.Time * 12) + (trip.Distance * 70);
+            }
+            await _orderRepository.UpdateBooking(order);
+            return new OrderResponseModel
+            {
+                OrderDto = new OrderDTO
+                {
+                    Price = order.Price
+                },
+                Message = $"Your price is {order.Price} ",
+                Success = true
+            };
+        }
+
+    } 
 }
