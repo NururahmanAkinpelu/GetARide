@@ -1,5 +1,6 @@
 using GetARide.Authentication;
 using GetARide.Context;
+using GetARide.Email;
 using GetARide.Implementation.Repository;
 using GetARide.Implementation.Services;
 using GetARide.Interface.IRepository;
@@ -46,7 +47,7 @@ namespace GetARide
             services.AddControllers();
             services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<IAdminService, AdminService>();
-
+            services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
 
@@ -58,7 +59,7 @@ namespace GetARide
 
             services.AddScoped<IDriverRepository, DriverRepository>();
             services.AddScoped<IDriverService, DriverService>();
-
+            
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IVehicleService, VehicleService>();
 

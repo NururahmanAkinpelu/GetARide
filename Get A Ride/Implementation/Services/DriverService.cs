@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static GetARide.Email.EmailDTO;
+using GetARide.Email;
 
 namespace GetARide.Implementation.Services
 {
@@ -17,12 +19,14 @@ namespace GetARide.Implementation.Services
         private readonly IUserRepository _userRepository;
         private readonly IDriverRepository _driverRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IEmailSender _email;
         private readonly ApplicationContext _context;
-        public DriverService(IUserRepository userRepository, IDriverRepository driverRepository, IRoleRepository roleRepository, ApplicationContext context)
+        public DriverService(IUserRepository userRepository, IDriverRepository driverRepository, IRoleRepository roleRepository,IEmailSender email, ApplicationContext context)
         {
             _userRepository = userRepository;
             _driverRepository = driverRepository;
             _roleRepository = roleRepository;
+            _email = email;
             _context = context;
         }
 
@@ -76,6 +80,14 @@ namespace GetARide.Implementation.Services
             }
             driver.IsApproved = true;
             await _driverRepository.UpdateDriver(driver);
+            var emailRequest = new EmailRequestModel
+            {
+                ReceiverName = driver.LastName,
+                ReceiverEmail = driver.Email,
+                Message = $"Hello Mr {driver.LastName}.\n You have successfully registered on GetARide as a driver, your account has not been approved yet so you can't perofrm any activities yet. We'll let you know when your acct has been activated. Thank ",
+                Subject = "Driver Registration"
+            };
+            await _email.SendEmail(emailRequest);
             return new BaseResponse
             {
                 Message = "Driver approved successfully",

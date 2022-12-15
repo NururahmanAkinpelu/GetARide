@@ -6,7 +6,7 @@ let fetchUnapprovedDrivers = async () => {
   console.log(jsonUnLandlords); 
   return jsonUnLandlords;
 } 
-let displayUnapprovedDrivers = async () => {
+let displayUnapprovedDrivers = async () => { 
     let count = 0;
     const response = await fetchUnapprovedDrivers();
     let tableData = document.querySelector("#unapprovedDrivers");

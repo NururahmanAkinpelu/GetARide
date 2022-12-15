@@ -13,36 +13,6 @@ namespace GetARide.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private readonly IVehicleService _vehicleService;
-        public TestController(IVehicleService vehicleService)
-        {
-            _vehicleService = vehicleService;
-        }
-        [HttpPost("RegisterVehicle")]
-        public async Task<IActionResult> RegisterVehicle([FromForm] VehicleRequestModel model)
-        {
-            /*            var files = HttpContext.Request.Form;
-
-                        if (files != null && files.Count > 0)
-                        {
-                            string imageDirectory = Path.Combine(_webHostEnvironment.WebRootPath, "Documents");
-                            Directory.CreateDirectory(imageDirectory);
-                            foreach (var file in files.Files)
-                            {
-                                FileInfo info = new FileInfo(file.FileName);
-                                string documents = Guid.NewGuid().ToString() + info.Extension;
-                                string path = Path.Combine(imageDirectory, documents);
-                                using (var filestream = new FileStream(path, FileMode.Create))
-                               {
-                                    file.CopyTo(filestream);
-                                }
-                                model.Document = documents;
-                            }
-                        }*/
-            //var vehicle = await _vehicleService.RegisterVehicle(model, model.DriverId);
-            //if (vehicle.Success == true) return Ok(vehicle);
-
-            return BadRequest();
-        }
+        
     }
 }

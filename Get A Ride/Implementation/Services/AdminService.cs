@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GetARide.Email;
+using static GetARide.Email.EmailDTO;
 
 namespace GetARide.Implementation.Services
 {
@@ -18,13 +20,15 @@ namespace GetARide.Implementation.Services
         private readonly IAdminRepository _adminRepository;
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IEmailSender _email;
         private readonly ApplicationContext _context;
 
-        public AdminService(IAdminRepository adminRepository, IUserRepository userRepository, IRoleRepository roleRepository, ApplicationContext context)
+        public AdminService(IAdminRepository adminRepository, IUserRepository userRepository, IRoleRepository roleRepository, IEmailSender email, ApplicationContext context)
         {
             _adminRepository = adminRepository;
             _userRepository = userRepository;
             _roleRepository = roleRepository;
+            _email = email;
             _context = context;
         }
         
@@ -199,6 +203,7 @@ namespace GetARide.Implementation.Services
                     Success = false,
                 };
             }
+            model.Password = $"Pwd{Guid.NewGuid().ToString().Replace("-", "").Substring(0, 5).ToUpper()}";
             var user = new User
             {
                 FullName = $"{model.FirstName} {model.LastName}",
@@ -240,7 +245,14 @@ namespace GetARide.Implementation.Services
             admin.LastModifiedBy = addadmin.Id;
             admin.IsDeleted = false;
 
-            await _adminRepository.UpdateAdmin(admin);
+            var emailRequest = new EmailRequestModel
+            {
+                ReceiverName = addadmin.LastName,
+                ReceiverEmail = addadmin.Email,
+                Message = $"Hello Mr {model.LastName} You have been registered as an admin at GetARide.\n Your password is {model.Password}",
+                Subject = "Admin Registration"
+            };
+            await _email.SendEmail(emailRequest);
             return new BaseResponse
             {
                 Message = "admin Successfully registered",

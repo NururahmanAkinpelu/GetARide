@@ -26,7 +26,7 @@ namespace GetARide.Controllers
 
 
         [HttpPost("RegisterVehicle/{driverId}")]
-        public async Task<IActionResult> RegisterVehicle([FromForm] VehicleRequestModel model, int driverId)
+        public async Task<IActionResult> RegisterVehicle([FromForm]VehicleRequestModel model, int driverId)
         {
             var files = HttpContext.Request.Form;
 
@@ -53,7 +53,7 @@ namespace GetARide.Controllers
         }
 
         [HttpPut("UpdateVehicle/{id}")]
-        public async Task<IActionResult> UpdateVehicle([FromForm] UpdateVehicleRequestModel model, [FromRoute] int id)
+        public async Task<IActionResult> UpdateVehicle([FromForm]UpdateVehicleRequestModel model, [FromRoute] int id)
         {
             var files = HttpContext.Request.Form;
 

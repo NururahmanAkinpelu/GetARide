@@ -14,6 +14,7 @@ namespace GetARide.Interface.IService
         public Task<OrderResponseModel> MakeReservation(int tripId, int userId);
         public Task<BaseResponse> CancelOrder(int id);
         public Task<BaseResponse> AcceptOrder(int driverId, int id );
+        public Task<BaseResponse> EndOrder(int orderId);
         public Task<OrderResponseModel> GetOrderByReferenceNumber(string referenceNumber );
         public Task<OrdersResponseModel> GetOrdersByDriverEmail(string email );
         public Task<OrdersResponseModel> GetOrdersByPassengerEmail(string email );

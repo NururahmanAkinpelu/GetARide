@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static GetARide.Email.EmailDTO;
+using GetARide.Email;
 
 namespace GetARide.Implementation.Services
 {
@@ -17,12 +19,14 @@ namespace GetARide.Implementation.Services
         private readonly IUserRepository _userRepository;
         private readonly IPassengerRepository _passengerRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IEmailSender _email;
         private readonly ApplicationContext _context;
-        public PassengerService(IUserRepository userRepository, IPassengerRepository passengerRepository, IRoleRepository roleRepository, ApplicationContext context)
+        public PassengerService(IUserRepository userRepository, IPassengerRepository passengerRepository, IRoleRepository roleRepository, IEmailSender email, ApplicationContext context)
         {
             _userRepository = userRepository;
             _passengerRepository = passengerRepository;
             _roleRepository = roleRepository;
+            _email = email;
             _context = context;
         }
 
@@ -272,8 +276,15 @@ namespace GetARide.Implementation.Services
             passenger.CreatedBy = addpassenger.Id;
             passenger.LastModifiedBy = addpassenger.Id;
             passenger.IsDeleted = false;
-
             await _passengerRepository.UpdatePassenger(passenger);
+            var emailRequest = new EmailRequestModel
+            {
+                ReceiverName = passenger.Name,
+                ReceiverEmail = passenger.Email,
+                Message = $"Hello Mr {passenger.Name}\n Thanks for registering on GetARide. You would enjoy using our service",
+                Subject = "Admin Registration"
+            };
+            await _email.SendEmail(emailRequest);
             return new PassengerResponseModel
             {
                 Message = "passenger Successfully registered",

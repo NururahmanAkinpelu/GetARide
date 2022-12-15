@@ -17,6 +17,7 @@ let displayVehicles = async () => {
         count++;
     tableData.innerHTML += `<tr>
             <td>${count}</td>
+            <img width="100px" height="100px" src = "https://localhost:5001/api/Documents/${element.documents}" alt"">
             <td>${element.name}</td>
             <td>${element.model}</td>
             <td>${element.colour}</td>

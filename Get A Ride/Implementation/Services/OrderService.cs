@@ -594,5 +594,17 @@ namespace GetARide.Implementation.Services
             };
         }
 
+        public async Task<BaseResponse> EndOrder(int orderId)
+        {
+            var order = await _orderRepository.GetBooking(orderId);
+            order.Status = OrderStatus.Ended;
+            await CalculateOrderPrice(orderId);
+            await _orderRepository.UpdateBooking(order);
+            return new BaseResponse
+            {
+                Message = $"Order ended. You are to pay{order.Price}",
+                Success = true
+            };
+        }
     } 
 }

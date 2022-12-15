@@ -9,6 +9,7 @@ namespace GetARide.Entities
     {
         Sent =1,
         Accepted,
+        Ended,
         Canceled,
     }
 }

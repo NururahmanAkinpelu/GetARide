@@ -74,7 +74,7 @@ namespace GetARide.Implementation.Services
             vehicle.LastModifiedBy = addVehicle.DriverId;
             vehicle.IsDeleted = false;
             vehicle.IsApproved = false;
-         
+            
 
             return new BaseResponse
             {
